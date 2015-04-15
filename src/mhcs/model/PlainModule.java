@@ -16,13 +16,19 @@ public class PlainModule extends Module{
 	private Module neighborSouth;
 	private Integer neighborWestId;
 	private Module neighborWest;
+	private String type;
 	
 	//Constructors
 	public PlainModule(int x, int y, int id, int turns, String cond) {
 		super(x, y, id, turns, cond);
+		
+		type = "Plain";
 	}
 	public PlainModule(int x, int y, int id, int turns, String cond, Module north, Module east, Module south, Module west) {
 		super(x, y, id, turns, cond);
+		
+		type = "Plain";
+		
 		neighborNorth = north;
 		if(north != null) {
 			neighborNorthId = north.getIdNumber();
@@ -97,5 +103,9 @@ public class PlainModule extends Module{
 	public void setWestNeighbor(Module newNeighbor) {
 		neighborWest = newNeighbor;
 		neighborWestId = newNeighbor.getIdNumber();
+	}
+	
+	public String getType() {
+		return type;
 	}
 }

@@ -67,4 +67,6 @@ public abstract class Module{
 	public void setCondition(String newCondition) {
 		condition = newCondition;
 	}
+	
+	abstract public String getType();
 }
