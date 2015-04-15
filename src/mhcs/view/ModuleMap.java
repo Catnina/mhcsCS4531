@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Image;
 
 /**
  * Creates a map of all the module positions on the map.
- * After a module has been added or removed, call redraw() to update the map.
+ * After a module has been added or removed, call renderMap(ModuleList) to update the map.
  * 
  * @author Ryan Ostroot
  *
@@ -22,6 +22,8 @@ public class ModuleMap {
 	
 	public ModuleMap() {
 		map = new Grid(50, 100);
+		map.getCellFormatter().setStyleName(50,100,"tableCell");
+		map.addStyleName("background");
 	}
 	
 	/**
