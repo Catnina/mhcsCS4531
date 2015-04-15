@@ -12,6 +12,7 @@ import com.google.gwt.core.client.EntryPoint;
 
 import mhcs.view.ModuleMap;
 import mhcs.model.ModuleList;
+import mhcs.model.ModuleMaker;
 import mhcs.control.weather;
 
 import com.google.gwt.dom.client.Style.Unit;
@@ -129,7 +130,7 @@ public class Gui{
            StackLayoutPanel stackPanel = new StackLayoutPanel(Unit.EM);
            stackPanel.add(weatherPanel, new HTML("Weather"),4);
            stackPanel.add(tenPanel, new HTML("10-Day Alert"), 4);
-           //centerPanel.add(ModuleMap.renderMap(ModuleList.getModules()));
+           centerPanel.add(ModuleMap.renderMap(ModuleList.getModules()));  
            panel.addEast(stackPanel,25);
            panel.addSouth(southPanel,5);
            
@@ -174,13 +175,25 @@ public class Gui{
 		      orientationSuggest.addItem("Three Rotations");
 		      Button addModuleButton = new Button("Add Module", new ClickHandler() {
 		          public void onClick(ClickEvent event) {
-			            //send to event bus
-		        	  	//able to add? (boolean)
-		        	  	//show 
-		        	  	makeMain();	
+		        	  	Integer configNumb = Integer.valueOf(configNumberInput.getText());
+		        	  	Integer xNumb = Integer.valueOf(xCoordinate.getText());
+		        	  	Integer yNumb = Integer.valueOf(yCoordinate.getText());
+		        	  	Integer orientNumb = orientationSuggest.getSelectedIndex();
+		        	  	String conditionString = conditionSuggest.getItemText(orientationSuggest.getSelectedIndex());
+		        	  		
+			            boolean addModuleSucess = ModuleMaker.createModule(configNumb, xNumb, yNumb, orientNumb, conditionString);
+			            RootPanel.get().clear();
+			            if(addModuleSucess)
+			            	RootPanel.add(new Label("Successfully Added"));
+			            else
+			            	RootPanel.get().add(new Label("Unable to Add Module"));
+			            Button ok = new Button("OK", new ClickHandler(){
+			            	public void onClick(ClickEvent event){
+					            makeMain();	
+			            	}
+			            });
 		        	  	}
 			        });
-		      
 		      //add items to panel1
 		      panel1.add(configNumber);
 		      panel1.add(configNumberInput);

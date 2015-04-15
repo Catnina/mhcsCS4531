@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class weather {
     
     public static ScrollPanel getResponse(){
-          String url = "http://api.wunderground.com/api/a4e7563412689635/conditions/q/55811.json";
+          String url = "http://api.wunderground.com/api/OUR CODE/conditions/q/55811.json";
           url = URL.encode(url);
   
           ScrollPanel i = new ScrollPanel();
