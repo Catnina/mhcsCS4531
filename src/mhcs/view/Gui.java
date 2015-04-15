@@ -79,12 +79,6 @@ public class Gui{
 	   private void makeMain(){
 		   RootPanel.get().clear();	
 		   DockLayoutPanel panel = new DockLayoutPanel(Unit.EM);
-		   // p.addNorth(new HTML("north"), 2);
-		   // p.addSouth(new HTML("south"), 2);
-		   // p.addEast(new HTML("east"), 2);
-		   // p.addWest(new HTML("west"), 2);
-		   // p.add(new HTML("center"));
-
 		    // Attach the LayoutPanel to the RootLayoutPanel. The latter will listen for
 		    // resize events on the window to ensure that its children are informed of
 		    // possible size changes.
@@ -130,25 +124,13 @@ public class Gui{
            StackLayoutPanel stackPanel = new StackLayoutPanel(Unit.EM);
            stackPanel.add(weatherPanel, new HTML("Weather"),4);
            stackPanel.add(tenPanel, new HTML("10-Day Alert"), 4);
-           centerPanel.add(ModuleMap.renderMap(ModuleList.getModules()));  
+           panel.add(new ModuleMap().renderMap(new ModuleList()));  
            panel.addEast(stackPanel,25);
            panel.addSouth(southPanel,5);
            
            RootLayoutPanel rp = RootLayoutPanel.get();
 		    rp.add(panel);
 	   }
-	   
-	   //I don't know if I need these methods...
-	   private void addModule(ClickHandler clickHandler) {
-		 //TODO Auto-generated Method stub
-	}
-	   private void getConfigs(ClickHandler clickHandler) {
-		// TODO Auto-generated method stub	
-	}
-	   private void removeModule(ClickHandler clickHandler) {
-		// TODO Auto-generated method stub	
-	}
-
 
 	private void addModuleMethod(){
 		RootPanel.get().clear();		   
@@ -173,18 +155,17 @@ public class Gui{
 		      orientationSuggest.addItem("One Rotation");
 		      orientationSuggest.addItem("Two Rotations");
 		      orientationSuggest.addItem("Three Rotations");
-		      Button addModuleButton = new Button("Add Module", new ClickHandler() {
-		          public void onClick(ClickEvent event) {
-		        	  	Integer configNumb = Integer.valueOf(configNumberInput.getText());
-		        	  	Integer xNumb = Integer.valueOf(xCoordinate.getText());
-		        	  	Integer yNumb = Integer.valueOf(yCoordinate.getText());
-		        	  	Integer orientNumb = orientationSuggest.getSelectedIndex();
-		        	  	String conditionString = conditionSuggest.getItemText(orientationSuggest.getSelectedIndex());
-		        	  		
-			            boolean addModuleSucess = ModuleMaker.createModule(configNumb, xNumb, yNumb, orientNumb, conditionString);
+		      final Integer configNumb = Integer.valueOf(configNumberInput.getText());
+      	  	  final Integer xNumb = Integer.valueOf(xCoordinate.getText());
+      	  	  final Integer yNumb = Integer.valueOf(yCoordinate.getText());
+      	  	  final Integer orientNumb = orientationSuggest.getSelectedIndex();
+      	  	  final String conditionString = conditionSuggest.getItemText(orientationSuggest.getSelectedIndex());
+		      /**final Button addModuleButton = new Button("Add Module", new ClickHandler() {
+		          public void onClick(ClickEvent event) {	
+			          	boolean addModuleSucess = ModuleMaker.createModule(configNumb, xNumb, yNumb, orientNumb, conditionString);
 			            RootPanel.get().clear();
 			            if(addModuleSucess)
-			            	RootPanel.add(new Label("Successfully Added"));
+			            	RootPanel.add(static new Label("Successfully Added"));
 			            else
 			            	RootPanel.get().add(new Label("Unable to Add Module"));
 			            Button ok = new Button("OK", new ClickHandler(){
@@ -193,7 +174,7 @@ public class Gui{
 			            	}
 			            });
 		        	  	}
-			        });
+			        });*/
 		      //add items to panel1
 		      panel1.add(configNumber);
 		      panel1.add(configNumberInput);
@@ -204,9 +185,8 @@ public class Gui{
 		      panel1.add(conditionSuggest);
 		      panel1.add(orientation);
 		      panel1.add(orientationSuggest);
-		      panel1.add(addModuleButton);
+		      //panel1.add(addModuleButton);
 
-		      //addModulePopUp.add(panel1);
 		      RootPanel.get().add(panel1);
 	   }
 	
@@ -220,8 +200,9 @@ public class Gui{
 	
 	private VerticalPanel makeWeatherMethod(){
 		VerticalPanel tempPanel = new VerticalPanel();
-		ScrollPanel sp = weather.getResponse();
-		tempPanel.add(sp);
+		//ScrollPanel sp = weather.getResponse();
+		//tempPanel.add(sp);
+		tempPanel.add(new Label("weather here."));
 		return tempPanel;
 	}
 	

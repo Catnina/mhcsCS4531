@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class weather {
     
     public static ScrollPanel getResponse(){
-          String url = "http://api.wunderground.com/api/OUR CODE/conditions/q/55811.json";
+          String url = "http://api.wunderground.com/api/76618a56636e14ef/conditions/q/55811.json";
           url = URL.encode(url);
   
           ScrollPanel i = new ScrollPanel();
@@ -40,7 +40,8 @@ public class weather {
              
                   @Override
               public void onFailure(final Throwable caught) {
-                  Window.alert("JSONP onFailure");
+                  //Window.alert("JSONP onFailure");
+                  i.add(new Label("wunderground connection failed."));
               }
 
               @Override
