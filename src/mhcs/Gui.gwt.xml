@@ -23,10 +23,12 @@
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='mhcs.view.Gui'/>
+  
 
   <!-- Specify the paths for translatable code                    -->
   <source path='view'/>
-
+  <source path='model'/>
+  <source path= 'control'/>
 
   <!-- allow Super Dev Mode -->
   <add-linker name="xsiframe"/>
