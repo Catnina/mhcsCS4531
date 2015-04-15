@@ -14,7 +14,7 @@ public class ModuleImage extends Image {
 	Module mod;
 	
 	ModuleImage(String path, Module newMod) {
-		super.setUrl(path);
+		super(path);
 		mod = newMod;
 	}
 	
