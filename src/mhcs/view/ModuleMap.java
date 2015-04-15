@@ -1,6 +1,8 @@
 package mhcs.view;
 
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import mhcs.model.Module;
 import mhcs.model.ModuleList;
@@ -32,14 +34,14 @@ public class ModuleMap {
 	 * @return The GWT grid representation of the module map
 	 */
 	public Grid renderMap(ModuleList list) {
-		Enumeration<Module> modlist = list.getModules();
+		Iterator<Module> mods = list.getModules().iterator();
 		Module mod = null;
 		String imgPath = "";
 		//int modId;
 		
-		while(modlist.hasMoreElements()) {
+		while(mods.hasNext()) {
 			imgPath = "img/";
-			mod = modlist.nextElement();
+			mod = mods.next();
 			/*
 			modId = mod.getIdNumber();
 			if((modId >= 1) || (modId <= 40)) {
