@@ -9,11 +9,15 @@ package mhcs.view;
  *
  */
 import com.google.gwt.core.client.EntryPoint;
+
 import mhcs.view.ModuleMap;
 import mhcs.model.ModuleList;
+
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -21,14 +25,34 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 
 public class Gui{
-	   public void onModuleLoad() {	      
+	   public void onModuleLoad() {	
+		   final PasswordTextBox ptb = new PasswordTextBox();
+		   final TextBox tb = new TextBox();
+		   tb.addKeyPressHandler(new KeyPressHandler() {
+
+			      public void onKeyPress(KeyPressEvent event) {
+			        if (!Character.isDigit(event.getCharCode())) {
+			          ((TextBox) event.getSource()).cancelKey();
+			        }
+			      }
+			    });
+		   VerticalPanel panel = new VerticalPanel();
+		    panel.add(tb);
+		    panel.add(ptb);
+		    RootPanel.get().add(panel);
+	   }
+}
+		   
+		 /**  
 	      DockLayoutPanel panel = new DockLayoutPanel(Unit.EM);
 	      Grid panel1 = new Grid(4,3);
 	      
@@ -111,3 +135,5 @@ public class Gui{
 	      //10 day alert in north panel		
 	}
 }
+
+*/
