@@ -12,6 +12,7 @@ import com.google.gwt.core.client.EntryPoint;
 
 import mhcs.view.ModuleMap;
 import mhcs.model.ModuleList;
+import mhcs.control.weather;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -23,21 +24,34 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.dom.client.Style.Unit;
 
 
 public class Gui{
 	   public void onModuleLoad() {	
+		   loginPage();
+	   }
+	   
+	   private void loginPage(){
+		   RootPanel.get().clear();
 		   final PasswordTextBox ptb = new PasswordTextBox();
 		   final Label tb = new Label("Enter Password:");
 		   VerticalPanel panel = new VerticalPanel();
@@ -49,7 +63,7 @@ public class Gui{
 		    enter.addClickHandler(new ClickHandler() {
 		    	public void onClick(ClickEvent event) { 
 		    	String s = ptb.getText();
-		    	if (s.equals("trickypassword")) {
+		    	if (s.equals("mhcs")) {
 		    	tb.setText("Redirecting to Main Page");
 		    	makeMain();
 		    	}
@@ -61,11 +75,21 @@ public class Gui{
 		    });
 	   }
 	   
-	   
 	   private void makeMain(){
 		   RootPanel.get().clear();	
-		   VerticalPanel panel = new VerticalPanel();
-		   FlowPanel southPanel = new FlowPanel();
+		   DockLayoutPanel panel = new DockLayoutPanel(Unit.EM);
+		   // p.addNorth(new HTML("north"), 2);
+		   // p.addSouth(new HTML("south"), 2);
+		   // p.addEast(new HTML("east"), 2);
+		   // p.addWest(new HTML("west"), 2);
+		   // p.add(new HTML("center"));
+
+		    // Attach the LayoutPanel to the RootLayoutPanel. The latter will listen for
+		    // resize events on the window to ensure that its children are informed of
+		    // possible size changes.
+		    
+		   HorizontalPanel southPanel = new HorizontalPanel();
+		   HorizontalPanel northPanel = new HorizontalPanel();
 		   //buttons in south area
 		   Button addModule= new Button("Add Module", new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -87,44 +111,49 @@ public class Gui{
 		   });
            southPanel.add(getConfigs);
            //configurations possible in north segment
+           Button logoutButton= new Button("Log Out", new ClickHandler() {
+               public void onClick(ClickEvent event) {
+                loginPage();
+  		      }
+  		   });
            Label configPoss = new Label("minimum configuration NOT possible");
-           panel.add(configPoss);
+           //add listener; check that configuration is/isn't possible
+           northPanel.add(configPoss);
+           northPanel.add(logoutButton);
+           panel.addNorth(northPanel,5);
 		   //map in center area
-		   //panel.add(ModuleMap.renderMap(ModuleList.getModules()));
-           panel.add(southPanel);
-           //10 day alert in north panel??	
-           RootPanel.get().add(panel);
+           VerticalPanel weatherPanel = new VerticalPanel();
+           weatherPanel = makeWeatherMethod();
+           VerticalPanel tenPanel = new VerticalPanel();
+           tenPanel = makeTenMethod();
+           StackLayoutPanel stackPanel = new StackLayoutPanel(Unit.EM);
+           stackPanel.add(weatherPanel, new HTML("Weather"),4);
+           stackPanel.add(tenPanel, new HTML("10-Day Alert"), 4);
+           //centerPanel.add(ModuleMap.renderMap(ModuleList.getModules()));
+           panel.addEast(stackPanel,25);
+           panel.addSouth(southPanel,5);
+           
+           RootLayoutPanel rp = RootLayoutPanel.get();
+		    rp.add(panel);
 	   }
 	   
+	   //I don't know if I need these methods...
 	   private void addModule(ClickHandler clickHandler) {
-		// TODO Auto-generated method stub
-		
+		 //TODO Auto-generated Method stub
 	}
-
-
-	private void getConfigs(ClickHandler clickHandler) {
-		// TODO Auto-generated method stub
-		
+	   private void getConfigs(ClickHandler clickHandler) {
+		// TODO Auto-generated method stub	
 	}
-
-
-	private void removeModule(ClickHandler clickHandler) {
-		// TODO Auto-generated method stub
-		
+	   private void removeModule(ClickHandler clickHandler) {
+		// TODO Auto-generated method stub	
 	}
 
 
 	private void addModuleMethod(){
-		   //TO BE DONE IN THIS CLASS:
-		   //disable add, remove and getConfigs buttons
-
-		   //click outside to close
-		   //
-		   
-		 //this section of code makes the elements for within the addModule popup window
+		RootPanel.get().clear();		   
+		 //this section of code makes the elements for adding a module
 		   	  VerticalPanel panel1 = new VerticalPanel();
 		   	  //actually want to use list boxes for dropdowns suggest doesn't return current selection
-		      PopupPanel addModulePopUp = new PopupPanel();
 		      Label configNumber = new Label("Module Identification Number");
 		      TextBox configNumberInput = new TextBox();   
 		      Label coordinates = new Label("Coordinates");
@@ -146,8 +175,10 @@ public class Gui{
 		      Button addModuleButton = new Button("Add Module", new ClickHandler() {
 		          public void onClick(ClickEvent event) {
 			            //send to event bus
-		        	  	//close window
-			          }
+		        	  	//able to add? (boolean)
+		        	  	//show 
+		        	  	makeMain();	
+		        	  	}
 			        });
 		      
 		      //add items to panel1
@@ -162,54 +193,28 @@ public class Gui{
 		      panel1.add(orientationSuggest);
 		      panel1.add(addModuleButton);
 
-		      addModulePopUp.add(panel1);
-		      RootPanel.get().add(addModulePopUp);
+		      //addModulePopUp.add(panel1);
+		      RootPanel.get().add(panel1);
 	   }
-}
-		   
-		 /**  
-
-
-	      
-	      //JPopupMenu removeModulePopUp = new JPopupMenu();
-	      //JPopupMenu configurationAlert = new JPopupMenu();
-	      //JPopupMenu tenDayAlert = new JPopupMenu();
-	      
-	     // Panel panel_1 = new Panel();
-	     // panel.add(panel_1, BorderLayout.SOUTH);
-	     // panel_1.setLayout(new GridLayout(1, 0, 0, 0));
-	      
-	      //map in center area
-	      //panel.add(ModuleMap.renderMap(ModuleList.getModules()));
-	      
-
-	      //buttons in south area
-	      Button addModule = new Button("Add Module", new ClickHandler() {
-	          public void onClick(ClickEvent event) {
-	            //disable add, remove and get configuration buttons  
-	          }
-	        });
-	      panel.addSouth(addModule, 0);
-	      Button removeModule = new Button("Edit/Remove Module", new ClickHandler() {
-	          public void onClick(ClickEvent event) {
-	            Window.alert("How high?");
-	          }
-	        });
-	      panel.addSouth(removeModule, 0);
-	      Button getConfigs = new Button("Get Configurations", new ClickHandler() {
-	          public void onClick(ClickEvent event) {
-	            Window.alert("How high?");
-	          }
-	        });
-	      panel.addSouth(getConfigs, 0);
-	      
-	      
-	      //configurations possible in north segment
-	      Label configPoss = new Label("minimum configuration NOT possible");
-	      panel.addNorth(configPoss, 0);
-	      
-	      //10 day alert in north panel		
+	
+	private void removeModuleMethod(){
+		//TODO Janna
+	}
+	
+	private void getConfigurations(){
+	//TODO	Janna
+	}
+	
+	private VerticalPanel makeWeatherMethod(){
+		VerticalPanel tempPanel = new VerticalPanel();
+		ScrollPanel sp = weather.getResponse();
+		tempPanel.add(sp);
+		return tempPanel;
+	}
+	
+	private VerticalPanel makeTenMethod(){
+		VerticalPanel tempPanel = new VerticalPanel();
+		//TODO 
+		return tempPanel;
 	}
 }
-
-*/
