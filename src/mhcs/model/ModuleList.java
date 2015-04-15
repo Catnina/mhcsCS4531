@@ -8,15 +8,16 @@
 
 package mhcs.model;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 
 public class ModuleList {
-	private Hashtable<Integer, Module> moduleTable;
+	private HashMap<Integer, Module> moduleTable;
 	
 	//Constructor
 	public ModuleList() {
-		moduleTable = new Hashtable<Integer, Module>();
+		moduleTable = new HashMap<Integer, Module>();
 	}
 	
 	//Add and Remove
@@ -52,11 +53,12 @@ public class ModuleList {
 		return moduleTable.containsKey(idNum);
 	}
 	
-	public Enumeration<Module> getModules() {
-		return moduleTable.elements();
+	public Collection<Module> getModules() {
+		return moduleTable.values();
+		 		
 	}
 	
-	public Enumeration<Integer> getListOfModuleIds() {
-		return moduleTable.keys();
+	public Set<Integer> getListOfModuleIds() {
+		return moduleTable.keySet();
 	}
 }
