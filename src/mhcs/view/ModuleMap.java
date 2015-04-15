@@ -22,6 +22,8 @@ public class ModuleMap {
 	
 	public ModuleMap() {
 		map = new Grid(50, 100);
+		map.getCellFormatter().setStyleName(50,100,"tableCell");
+		map.addStyleName("background");
 	}
 	
 	/**

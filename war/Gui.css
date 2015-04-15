@@ -1,5 +1,19 @@
 /** Add css rules here for your application. */
 
+.tableCell {
+	border: 1px solid black;
+}
+
+td {
+	height: 50px;
+	min-width: 50px;
+	width: 50px;
+	max-width:50px;
+}
+
+.background {
+	background : url(img/MarsModuleLandingArea.jpg);
+}
 
 /** Example rules used by the template application (remove for your app) */
 h1 {
