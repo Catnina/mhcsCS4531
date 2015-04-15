@@ -21,6 +21,7 @@ import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -30,25 +31,66 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
 public class Gui{
 	   public void onModuleLoad() {	
 		   final PasswordTextBox ptb = new PasswordTextBox();
-		   final TextBox tb = new TextBox();
-		   tb.addKeyPressHandler(new KeyPressHandler() {
-
-			      public void onKeyPress(KeyPressEvent event) {
-			        if (!Character.isDigit(event.getCharCode())) {
-			          ((TextBox) event.getSource()).cancelKey();
-			        }
-			      }
-			    });
+		   final Label tb = new Label("Enter Password:");
 		   VerticalPanel panel = new VerticalPanel();
+		   final Button enter = new Button("Enter");
 		    panel.add(tb);
 		    panel.add(ptb);
+		    panel.add(enter);
 		    RootPanel.get().add(panel);
+		    enter.addClickHandler(new ClickHandler() {
+		    	public void onClick(ClickEvent event) { 
+		    	String s = ptb.getText();
+		    	if (s.equals("trickypassword")) {
+		    	tb.setText("Redirecting to Main Page");
+		    	makeMain();
+		    	}
+		    	else {
+		    		tb.setText("Please Re-Enter Password");
+		    		ptb.setText("");
+		    		}
+		    	}
+		    });
+	   }
+	   private void makeMain(){
+		   RootPanel.get().clear();	
+		   VerticalPanel panel = new VerticalPanel();
+		   FlowPanel southPanel = new FlowPanel();
+		   //buttons in south area
+		   Button addModule = new Button("Add Module", new ClickHandler() {
+            public void onClick(ClickEvent event) {
+              //add module window  
+	 	      }
+            });
+		   southPanel.add(addModule);
+		   RootPanel.get().add(panel);
+		   Button removeModule = new Button("Edit/Remove Module", new ClickHandler() {
+	        public void onClick(ClickEvent event) {
+	         //remove/edit modules window
+		    }
+		    });
+           southPanel.add(removeModule);
+	        Button getConfigs = new Button("Get Configurations", new ClickHandler() {
+             public void onClick(ClickEvent event) {
+              //get configurations
+		      }
+		   });
+           southPanel.add(getConfigs);
+           //configurations possible in north segment
+           Label configPoss = new Label("minimum configuration NOT possible");
+           panel.add(configPoss);
+		   //map in center area
+		   //panel.add(ModuleMap.renderMap(ModuleList.getModules()));
+           panel.add(southPanel);
+           //10 day alert in north panel??	
+           RootPanel.get().add(panel);
 	   }
 }
 		   
