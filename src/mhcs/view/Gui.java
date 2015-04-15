@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -59,25 +60,27 @@ public class Gui{
 		    	}
 		    });
 	   }
+	   
+	   
 	   private void makeMain(){
 		   RootPanel.get().clear();	
 		   VerticalPanel panel = new VerticalPanel();
 		   FlowPanel southPanel = new FlowPanel();
 		   //buttons in south area
-		   Button addModule = new Button("Add Module", new ClickHandler() {
+		   Button addModule= new Button("Add Module", new ClickHandler() {
             public void onClick(ClickEvent event) {
-              //add module window  
-	 	      }
+            	addModuleMethod();
+            }
             });
 		   southPanel.add(addModule);
 		   RootPanel.get().add(panel);
-		   Button removeModule = new Button("Edit/Remove Module", new ClickHandler() {
+		   Button removeModule = new Button ("Remove/Edit Module", new ClickHandler() {
 	        public void onClick(ClickEvent event) {
 	         //remove/edit modules window
 		    }
 		    });
            southPanel.add(removeModule);
-	        Button getConfigs = new Button("Get Configurations", new ClickHandler() {
+	       Button getConfigs= new Button("Get Configurations", new ClickHandler() {
              public void onClick(ClickEvent event) {
               //get configurations
 		      }
@@ -92,48 +95,79 @@ public class Gui{
            //10 day alert in north panel??	
            RootPanel.get().add(panel);
 	   }
+	   
+	   private void addModule(ClickHandler clickHandler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void getConfigs(ClickHandler clickHandler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void removeModule(ClickHandler clickHandler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void addModuleMethod(){
+		   //TO BE DONE IN THIS CLASS:
+		   //disable add, remove and getConfigs buttons
+
+		   //click outside to close
+		   //
+		   
+		 //this section of code makes the elements for within the addModule popup window
+		   	  VerticalPanel panel1 = new VerticalPanel();
+		   	  //actually want to use list boxes for dropdowns suggest doesn't return current selection
+		      PopupPanel addModulePopUp = new PopupPanel();
+		      Label configNumber = new Label("Module Identification Number");
+		      TextBox configNumberInput = new TextBox();   
+		      Label coordinates = new Label("Coordinates");
+		      TextBox xCoordinate = new TextBox();
+		      xCoordinate.setText("X Coordinate");
+		      TextBox yCoordinate = new TextBox();	  
+		      yCoordinate.setText("Y Coordinate");
+		      Label condition = new Label("Condition");
+		      ListBox conditionSuggest = new ListBox();
+		      conditionSuggest.addItem("Usable");
+		      conditionSuggest.addItem("Usable After Repair");
+		      conditionSuggest.addItem("Unusable");
+		      Label orientation = new Label("Orientation");
+		      ListBox orientationSuggest = new ListBox();
+		      orientationSuggest.addItem("None");
+		      orientationSuggest.addItem("One Rotation");
+		      orientationSuggest.addItem("Two Rotations");
+		      orientationSuggest.addItem("Three Rotations");
+		      Button addModuleButton = new Button("Add Module", new ClickHandler() {
+		          public void onClick(ClickEvent event) {
+			            //send to event bus
+		        	  	//close window
+			          }
+			        });
+		      
+		      //add items to panel1
+		      panel1.add(configNumber);
+		      panel1.add(configNumberInput);
+		      panel1.add(coordinates);
+		      panel1.add(xCoordinate);
+		      panel1.add(yCoordinate);
+		      panel1.add(condition);
+		      panel1.add(conditionSuggest);
+		      panel1.add(orientation);
+		      panel1.add(orientationSuggest);
+		      panel1.add(addModuleButton);
+
+		      addModulePopUp.add(panel1);
+		      RootPanel.get().add(addModulePopUp);
+	   }
 }
 		   
 		 /**  
-	      DockLayoutPanel panel = new DockLayoutPanel(Unit.EM);
-	      Grid panel1 = new Grid(4,3);
-	      
-	      //this section of code makes the elements for within the addModule popup window
-	      MultiWordSuggestOracle conditionOracle = new MultiWordSuggestOracle();
-	      conditionOracle.add("Usable");
-	      conditionOracle.add("Usable After Repair");
-	      conditionOracle.add("Unusable");
-		  MultiWordSuggestOracle orientationOracle = new MultiWordSuggestOracle();
-		  orientationOracle.add("None");
-		  orientationOracle.add("One Rotation");
-		  orientationOracle.add("Two Rotations");
-		  orientationOracle.add("Three Rotations");
-	      PopupPanel addModulePopUp = new PopupPanel();
-	      Label configNumber = new Label("Configuration Number");
-	      panel1.add(configNumber);
-	      TextBox configNumberInput = new TextBox();   
-	      panel1.add(configNumberInput);
-	      Label coordinates = new Label("Coordinates");
-	      panel1.add(coordinates);
-	      TextBox xCoordinate = new TextBox();
-	      panel.add(xCoordinate);
-	      TextBox yCoordinate = new TextBox();	  
-	      panel.add(yCoordinate);
-	      Label condition = new Label("Condition");
-	      panel.add(condition);
-	      SuggestBox conditionSuggest = new SuggestBox(conditionOracle);
-	      panel.add(conditionSuggest);
-	      Label orientation = new Label("Orientation");
-	      panel.add(orientation);
-	      SuggestBox orientationSuggest = new SuggestBox(orientationOracle);
-	      panel.add(orientationSuggest);
-	      Button addModuleButton = new Button("Add Module", new ClickHandler() {
-	          public void onClick(ClickEvent event) {
-		            //Window.alert("How high?");
-		          }
-		        });
-	      panel.add(addModuleButton);
-	      addModulePopUp.add(panel1);
 
 
 	      
