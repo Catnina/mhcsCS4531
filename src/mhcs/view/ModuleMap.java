@@ -32,12 +32,13 @@ public class ModuleMap {
 	public Grid renderMap(ModuleList list) {
 		Enumeration<Module> modlist = list.getModules();
 		Module mod = null;
-		String imgPath;
-		int modId;
+		String imgPath = "";
+		//int modId;
 		
 		while(modlist.hasMoreElements()) {
 			imgPath = "img/";
 			mod = modlist.nextElement();
+			/*
 			modId = mod.getIdNumber();
 			if((modId >= 1) || (modId <= 40)) {
 				imgPath += "Plain";
@@ -69,17 +70,18 @@ public class ModuleMap {
 			else if((modId >= 181) || (modId <= 184)) {
 				imgPath +="Medical";
 			}
+			*/
 			
-			imgPath += ".jpg";
-			ModuleImage img = new ModuleImage(imgPath);
+			imgPath += mod.getType() + ".jpg";
+			ModuleImage img = new ModuleImage(imgPath, mod);
 			img.setPixelSize(10, 10);
-			img.setModule(mod);
+			//img.setModule(mod);
     	    img.addClickHandler(new ClickHandler() {
     	    	  public void onClick(ClickEvent event) {
     	    		  ModuleImage temp = (ModuleImage)event.getSource();
     	    		  //TO-DO: Add pop up window that displays module details.
-    	    		  //
-    	    		  //
+    	    		  new ModuleInfoPopup(temp.getMod());
+    	    		  
     	    		  
     	    	  }
     	    });
