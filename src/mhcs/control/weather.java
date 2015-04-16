@@ -15,9 +15,12 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.jsonp.client.JsonpRequestBuilder;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -25,13 +28,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 //this class is just what was on his website- i haven't worked with it too much! The URL is correct. 
 
 
-public class weather {
+public class weather{
     
-    public static ScrollPanel getResponse(){
+    public static VerticalPanel getResponse(){
           String url = "http://api.wunderground.com/api/76618a56636e14ef/conditions/q/55811.json";
           url = URL.encode(url);
   
-          ScrollPanel i = new ScrollPanel();
+          final VerticalPanel i = new VerticalPanel();
           
           final JsonpRequestBuilder jsonp = new JsonpRequestBuilder();
 
@@ -48,9 +51,19 @@ public class weather {
               public void onSuccess(JavaScriptObject s) {
               JSONObject obj = new JSONObject(s);
               String result = obj.toString();
-              Window.alert(result);
+      		  JSONObject jA =(JSONObject)JSONParser.parseLenient(result); JSONValue jTry = jA.get("current_observation");
+      		  JSONObject jB = (JSONObject)JSONParser.parseLenient(jTry.toString());
+      		  JSONValue temp = jB.get("temp_c");
+      		  JSONValue visibility = jB.get("visibility_km");
+      		  String sTemp = temp.toString();
+      		  String sVisibility = visibility.toString();
+      		  i.add(new Label("Tempature: " + sTemp)); //TO VIEW 
+      		  i.add(new Label("Visibility: " + sVisibility)); //TO VIEW 
+      		  i.add(new Image("img/wunderground.jpg"));
+      		  i.setWidth("20px");
+              //Window.alert(result);
               //ScrollPanel i = new ScrollPanel();
-              i.add(new Label(result));
+              //i.add(new Label(result));
               
               }
              

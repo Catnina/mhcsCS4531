@@ -1,16 +1,6 @@
 package mhcs.view;
 
 
-/**
- * creates the graphical user interface. 
- * Event Bus handles adding and removing modules. 
- * 
- * @author Janna Madden
- *
- */
-import com.google.gwt.core.client.EntryPoint;
-
-import mhcs.view.ModuleMap;
 import mhcs.model.ModuleList;
 import mhcs.model.ModuleMaker;
 import mhcs.control.weather;
@@ -18,35 +8,27 @@ import mhcs.control.weather;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
-import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.dom.client.Style.Unit;
 
 
 public class Gui{
+	
+	public ModuleList moduleList;
+	
 	   public void onModuleLoad() {	
 		   loginPage();
 	   }
@@ -56,11 +38,12 @@ public class Gui{
 		   final PasswordTextBox ptb = new PasswordTextBox();
 		   final Label tb = new Label("Enter Password:");
 		   VerticalPanel panel = new VerticalPanel();
+		   panel.setWidth("200px");
 		   final Button enter = new Button("Enter");
 		    panel.add(tb);
 		    panel.add(ptb);
 		    panel.add(enter);
-		    RootPanel.get().add(panel);
+		    RootLayoutPanel.get().add(panel);
 		    enter.addClickHandler(new ClickHandler() {
 		    	public void onClick(ClickEvent event) { 
 		    	String s = ptb.getText();
@@ -84,10 +67,13 @@ public class Gui{
 		    // possible size changes.
 		    
 		   HorizontalPanel southPanel = new HorizontalPanel();
+		   southPanel.setWidth("700px");
 		   HorizontalPanel northPanel = new HorizontalPanel();
+		   northPanel.setWidth("1000px");
 		   //buttons in south area
 		   Button addModule= new Button("Add Module", new ClickHandler() {
             public void onClick(ClickEvent event) {
+            	//RootPanel.get().clear();
             	addModuleMethod();
             }
             });
@@ -115,27 +101,55 @@ public class Gui{
            //add listener; check that configuration is/isn't possible
            northPanel.add(configPoss);
            northPanel.add(logoutButton);
-           panel.addNorth(northPanel,5);
+           panel.addNorth(northPanel,4);
+           
 		   //map in center area
            VerticalPanel weatherPanel = new VerticalPanel();
            weatherPanel = makeWeatherMethod();
+           weatherPanel.setWidth("20px");
            VerticalPanel tenPanel = new VerticalPanel();
+           tenPanel.setWidth("20px");
            tenPanel = makeTenMethod();
            StackLayoutPanel stackPanel = new StackLayoutPanel(Unit.EM);
            stackPanel.add(weatherPanel, new HTML("Weather"),4);
            stackPanel.add(tenPanel, new HTML("10-Day Alert"), 4);
-           panel.add(new ModuleMap().renderMap(new ModuleList()));  
-           panel.addEast(stackPanel,25);
-           panel.addSouth(southPanel,5);
+           //ScrollPanel sPanel = new ScrollPanel();
+           //sPanel.setWidth(".60pct");
+           //sPanel.setHeight(".60pct");
+           //sPanel.add(new Label("center"));
+           //(new ModuleMap().renderMap(moduleList));  
+           //panel.add(sPanel);
+           panel.addEast(stackPanel,20);
+           panel.addSouth(southPanel,4);
            
-           RootLayoutPanel rp = RootLayoutPanel.get();
-		    rp.add(panel);
+           RootPanel rp = RootPanel.get();
+		   rp.add(panel);
 	   }
 
+	   private void addModule(ClickHandler clickHandler) {
+		   // TODO Auto-generated method stub
+		   }
+	   /*
++	private void getConfigs(ClickHandler clickHandler) {
++		// TODO Auto-generated method stub
++		
++	}
++
++
++	private void removeModule(ClickHandler clickHandler) {
++		// TODO Auto-generated method stub
++		
++	}*/
+	   
+	 
+	   
+	   
 	private void addModuleMethod(){
-		RootPanel.get().clear();		   
+		//RootPanel.get().clear();
 		 //this section of code makes the elements for adding a module
+			PopupPanel addModulePopUp = new PopupPanel();
 		   	  VerticalPanel panel1 = new VerticalPanel();
+		   	  //panel1.setWidth("1000px");
 		   	  //actually want to use list boxes for dropdowns suggest doesn't return current selection
 		      Label configNumber = new Label("Module Identification Number");
 		      TextBox configNumberInput = new TextBox();   
@@ -160,12 +174,12 @@ public class Gui{
       	  	  final Integer yNumb = Integer.valueOf(yCoordinate.getText());
       	  	  final Integer orientNumb = orientationSuggest.getSelectedIndex();
       	  	  final String conditionString = conditionSuggest.getItemText(orientationSuggest.getSelectedIndex());
-		      /**final Button addModuleButton = new Button("Add Module", new ClickHandler() {
+		      final Button addModuleButton = new Button("Add Module", new ClickHandler() {
 		          public void onClick(ClickEvent event) {	
-			          	boolean addModuleSucess = ModuleMaker.createModule(configNumb, xNumb, yNumb, orientNumb, conditionString);
+			          	boolean addModuleSucess = new ModuleMaker(moduleList).createModule(configNumb, xNumb, yNumb, orientNumb, conditionString);
 			            RootPanel.get().clear();
 			            if(addModuleSucess)
-			            	RootPanel.add(static new Label("Successfully Added"));
+			            	RootPanel.get().add(new Label("Successfully Added"));
 			            else
 			            	RootPanel.get().add(new Label("Unable to Add Module"));
 			            Button ok = new Button("OK", new ClickHandler(){
@@ -174,7 +188,7 @@ public class Gui{
 			            	}
 			            });
 		        	  	}
-			        });*/
+			        });
 		      //add items to panel1
 		      panel1.add(configNumber);
 		      panel1.add(configNumberInput);
@@ -185,9 +199,9 @@ public class Gui{
 		      panel1.add(conditionSuggest);
 		      panel1.add(orientation);
 		      panel1.add(orientationSuggest);
-		      //panel1.add(addModuleButton);
+		      panel1.add(addModuleButton);
 
-		      RootPanel.get().add(panel1);
+		      addModulePopUp.add(panel1);
 	   }
 	
 	private void removeModuleMethod(){
@@ -199,11 +213,8 @@ public class Gui{
 	}
 	
 	private VerticalPanel makeWeatherMethod(){
-		VerticalPanel tempPanel = new VerticalPanel();
-		//ScrollPanel sp = weather.getResponse();
-		//tempPanel.add(sp);
-		tempPanel.add(new Label("weather here."));
-		return tempPanel;
+		return weather.getResponse();
+		
 	}
 	
 	private VerticalPanel makeTenMethod(){
