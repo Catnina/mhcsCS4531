@@ -1,6 +1,7 @@
 package mhcs.view;
 
 import mhcs.model.Module;
+
 import com.google.gwt.user.client.ui.Image;
 
 
@@ -13,8 +14,8 @@ import com.google.gwt.user.client.ui.Image;
 public class ModuleImage extends Image {
 	Module mod;
 	
-	ModuleImage(String path, Module newMod) {
-		super(path);
+	ModuleImage(Module newMod) {
+		super("img/" + newMod.getType() + ".jpg");
 		mod = newMod;
 	}
 	

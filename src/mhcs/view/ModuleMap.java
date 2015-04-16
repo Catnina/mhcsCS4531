@@ -1,8 +1,6 @@
 package mhcs.view;
 
 import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
 
 import mhcs.model.Module;
 import mhcs.model.ModuleList;
@@ -24,8 +22,8 @@ public class ModuleMap {
 	
 	public ModuleMap() {
 		map = new Grid(50, 100);
-		map.getCellFormatter().setStyleName(50,100,"tableCell");
-		map.addStyleName("background");
+		//map.getCellFormatter().setStyleName(50,100,"tableCell");
+		//map.addStyleName("background");
 	}
 	
 	/**
@@ -34,17 +32,15 @@ public class ModuleMap {
 	 * @return The GWT grid representation of the module map
 	 */
 	public Grid renderMap(ModuleList list) {
-		Iterator<Module> mods = list.getModules().iterator();
+		Collection<Module> modList = list.getModules();
 		Module mod = null;
-		String imgPath = "";
 		//int modId;
 		
-		while(mods.hasNext()) {
-			imgPath = "img/";
-			mod = mods.next();
+		for(Module iterator : modList) {
+			mod = iterator;
 			/*
 			modId = mod.getIdNumber();
-			if((modId >= 1) || (modId <= 40)) {
+			if((modId >= 1) && (modId <= 40)) {
 				imgPath += "Plain";
 			}
 			else if((modId >= 61) || (modId <= 80)) {
@@ -76,10 +72,8 @@ public class ModuleMap {
 			}
 			*/
 			
-			imgPath += mod.getType() + ".jpg";
-			ModuleImage img = new ModuleImage(imgPath, mod);
-			img.setPixelSize(10, 10);
-			//img.setModule(mod);
+			ModuleImage img = new ModuleImage(mod);
+			img.setPixelSize(50, 50);
     	    img.addClickHandler(new ClickHandler() {
     	    	  public void onClick(ClickEvent event) {
     	    		  ModuleImage temp = (ModuleImage)event.getSource();
@@ -93,5 +87,9 @@ public class ModuleMap {
 			map.setWidget(mod.getYCoordinate(), mod.getXCoordinate(), img);
 		}
 		return map;
+	}
+	
+	public void setMapElement(int rows, int columns, Image img) {
+		map.setWidget(rows, columns, img);
 	}
 }
