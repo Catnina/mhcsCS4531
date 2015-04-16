@@ -11,10 +11,10 @@ public class ModuleMaker {
 	private ModuleList list;
 	
 	//Constructor
-	public ModuleMaker(ModuleList givenList)
-	{
-		list = givenList;
-	}
+	//public ModuleMaker(ModuleList givenList)
+	//{
+		//list = givenList;
+	//}
 	
 	//General Methods
 	public boolean createModule(Integer idNumber, Integer xCoordinate, Integer yCoordinate, Integer turnsToUpright, String condition) {
