@@ -11,6 +11,7 @@ package mhcs.model;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.Vector;
 
 public class ModuleList {
 	private HashMap<Integer, Module> moduleTable;
@@ -53,8 +54,11 @@ public class ModuleList {
 		return moduleTable.containsKey(idNum);
 	}
 	
-	public Collection<Module> getModules() {
-		return moduleTable.values();
+	public Vector<Module> getModules() {
+		Vector<Module> output;
+		Collection<Module> collect = moduleTable.values();
+		output = new Vector<Module>(collect);
+		return output;
 		 		
 	}
 	
