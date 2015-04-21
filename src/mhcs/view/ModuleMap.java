@@ -23,7 +23,7 @@ public class ModuleMap {
 	public ModuleMap() {
 		map = new Grid(50, 100);
 		//map.getCellFormatter().setStyleName(50,100,"tableCell");
-		//map.addStyleName("background");
+		map.addStyleName("background");
 	}
 	
 	/**
@@ -38,49 +38,15 @@ public class ModuleMap {
 		
 		for(Module iterator : modList) {
 			mod = iterator;
-			/*
-			modId = mod.getIdNumber();
-			if((modId >= 1) && (modId <= 40)) {
-				imgPath += "Plain";
-			}
-			else if((modId >= 61) || (modId <= 80)) {
-				imgPath +="Dormitory";
-			}
-			else if((modId >= 91) || (modId <= 100)) {
-				imgPath +="Sanitation";
-			}
-			else if((modId >= 111) || (modId <= 120)) {
-				imgPath +="Food";
-			}
-			else if((modId >= 131) || (modId <= 134)) {
-				imgPath +="Gym";
-			}
-			else if((modId >= 141) || (modId <= 144)) {
-				imgPath +="Canteen";
-			}
-			else if((modId >= 151) || (modId <= 154)) {
-				imgPath +="Power";
-			}
-			else if((modId >= 161) || (modId <= 164)) {
-				imgPath +="Control";
-			}
-			else if((modId >= 171) || (modId <= 174)) {
-				imgPath +="Airlock";
-			}
-			else if((modId >= 181) || (modId <= 184)) {
-				imgPath +="Medical";
-			}
-			*/
-			
 			ModuleImage img = new ModuleImage(mod);
 			img.setPixelSize(50, 50);
     	    img.addClickHandler(new ClickHandler() {
     	    	  public void onClick(ClickEvent event) {
     	    		  ModuleImage temp = (ModuleImage)event.getSource();
     	    		  //TO-DO: Add pop up window that displays module details.
-    	    		  new ModuleInfoPopup(temp.getMod());
-    	    		  
-    	    		  
+    	    		  ModuleInfoPopup p = new ModuleInfoPopup(temp.getMod());
+    	    		  p.setPopupPosition(event.getClientX(), event.getClientY());
+    	    		  p.show();
     	    	  }
     	    });
 			
