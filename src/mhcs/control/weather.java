@@ -57,15 +57,13 @@ public class weather{
       		  JSONValue visibility = jB.get("visibility_km");
       		  String sTemp = temp.toString();
       		  String sVisibility = visibility.toString();
-      		  i.add(new Label("Tempature: " + sTemp)); //TO VIEW 
-      		  i.add(new Label("Visibility: " + sVisibility)); //TO VIEW 
+      		  sVisibility = sVisibility.substring(1);
+      		  sVisibility = sVisibility.substring(0, sVisibility.length()-1);
+      		  i.add(new Label("Tempature (in C): " + sTemp)); //TO VIEW 
+      		  i.add(new Label("Visibility (in Km): " + sVisibility)); //TO VIEW 
       		  i.add(new Image("img/wunderground.jpg"));
-      		  i.setWidth("20px");
-              //Window.alert(result);
-              //ScrollPanel i = new ScrollPanel();
-              //i.add(new Label(result));
-              
-              }
+      		  i.setWidth("6cm"); 
+        }
              
           });
 		return i;

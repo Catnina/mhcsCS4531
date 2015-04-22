@@ -18,6 +18,9 @@
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
   <inherits name='com.google.gwt.http.HTTP'/>
   <inherits name='com.google.gwt.json.JSON'/>
+  
+    <!-- Inherit sound support -->
+  <inherits name='com.allen_sauer.gwt.voices.gwt-voices'/>
 
   <!-- Other module inherits                                      -->
 
@@ -32,4 +35,5 @@
 
   <!-- allow Super Dev Mode -->
   <add-linker name="xsiframe"/>
+  <entry-point class="mhcs.view.main"/>
 </module>
