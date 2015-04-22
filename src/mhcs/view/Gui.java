@@ -184,7 +184,7 @@ public class Gui implements EntryPoint{
 
 	   }
 
-	   private void addModule(ClickHandler clickHandler) {
+	/*   private void addModule(ClickHandler clickHandler) {
 		   // TODO Auto-generated method stub
 		   }
 	   
@@ -196,7 +196,7 @@ public class Gui implements EntryPoint{
 	private void removeModule(ClickHandler clickHandler) {
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 	   
 	 
 	   
@@ -219,7 +219,7 @@ public class Gui implements EntryPoint{
         final TextBox xCoordinate = new TextBox();
         xCoordinate.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
-				yNumb = Integer.valueOf(xCoordinate.getText());	
+				xNumb = Integer.valueOf(xCoordinate.getText());	
 			}
         }
         );
@@ -247,7 +247,7 @@ public class Gui implements EntryPoint{
         final ListBox conditionSuggest = new ListBox();
         conditionSuggest.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
-			conditionString = conditionSuggest.getItemText(orientationSuggest.getSelectedIndex());	
+			conditionString = conditionSuggest.getItemText(conditionSuggest.getSelectedIndex());	
 			}
         }
         );
@@ -285,6 +285,8 @@ public class Gui implements EntryPoint{
 					else{
 						configPoss.setText("minimum configuration possible!");
 					}
+			        //PopupPanel temp  = new PopupPanel();
+			        //temp.add(new Label("it works"));
 		      		//updateLabel();
 	    	  	  }
           	  	  else{
@@ -369,16 +371,21 @@ public class Gui implements EntryPoint{
 	
 	private void getConfigurations(){
 		final PopupPanel pPanel = new PopupPanel();
-		pPanel.setWidth("8cm");
+		pPanel.setSize("20cm", "15cm");
 		pPanel.setGlassEnabled(true);
 		pPanel.setAutoHideEnabled(true);
 		DockLayoutPanel layoutPPanel = new DockLayoutPanel(Unit.CM);
+		VerticalPanel verticalChoicePanel = new VerticalPanel();
 		ListBox chooseConfig = new ListBox();
 		chooseConfig.addItem("Minimum 1");
 		chooseConfig.addItem("Minimum 2");
 		chooseConfig.addItem("Full 1");
 		chooseConfig.addItem("Full 2");
-		layoutPPanel.addEast(chooseConfig, 5);
+		verticalChoicePanel.add(chooseConfig);
+		Button chooseButton = new Button("Choose");
+		//button needs listener
+		layoutPPanel.addEast(verticalChoicePanel,5);
+		layoutPPanel.addEast(chooseButton, 5);
 		
 		StackLayoutPanel configsPanel = new StackLayoutPanel(Unit.CM);
 		HorizontalPanel min = new HorizontalPanel();
