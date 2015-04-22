@@ -3,6 +3,7 @@ package mhcs.view;
 
 import mhcs.model.ModuleList;
 import mhcs.model.ModuleMaker;
+import mhcs.control.counters;
 import mhcs.control.weather;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -59,6 +60,7 @@ public class Gui implements EntryPoint{
 	SoundController soundController = new SoundController();
 	DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.CM);
 	TabLayoutPanel backPanel = new TabLayoutPanel(2, Unit.CM);
+	Label configPoss;
 	
 	private String conditionString = "Usable";
 	private Integer xNumb = 1;
@@ -150,7 +152,7 @@ public class Gui implements EntryPoint{
                 loginPage();
   		      }
   		   });
-           Label configPoss = new Label(updateLabel());
+           configPoss = new Label("minimum configuration NOT possible");
            northPanel.add(configPoss);
            northPanel.add(logoutButton);
            
@@ -277,7 +279,13 @@ public class Gui implements EntryPoint{
 			        pPanel.hide();
 	    	  		Sound intro = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"/sounds/beep.mp3");
 			        intro.play();
-		      		updateLabel();
+			        if (new counters(moduleList).minConfigPossible()){
+						configPoss.setText("minimum configuration NOT possible");
+					}
+					else{
+						configPoss.setText("minimum configuration possible!");
+					}
+		      		//updateLabel();
 	    	  	  }
           	  	  else{
         	          pPanel.hide();
@@ -306,6 +314,7 @@ public class Gui implements EntryPoint{
 		VerticalPanel vPanel = new VerticalPanel();
 		pPanel.setGlassEnabled(true);
 		pPanel.setAutoHideEnabled(true);
+		pPanel.setSize("3cm", "2cm");
 		final ListBox testCases = new ListBox();
         testCases.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
@@ -330,19 +339,24 @@ public class Gui implements EntryPoint{
 	        	String proxy = "http://www.d.umn.edu/~abrooks/Proxy.php?url=";
 	 		   String url = proxy+"http://www.d.umn.edu/~abrooks/SomeTests.php?q="+"caseNumb";
 	 		   url = URL.encode(url);
-	 		   RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url); try {
+	 		   RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url); 
+	 		   try {
 	 			   Request request = builder.sendRequest(null, new RequestCallback() {
-	 			 public void onError(Request request, Throwable exception) { Window.alert("onError: Couldn't retrieve JSON");
-	 			 }
+	 				   public void onError(Request request, Throwable exception) { Window.alert("onError: Couldn't retrieve JSON");
+	 				   pPanel.hide();//does this help? YES! Otherwise can't click other buttons after this gets thrown
+	 				   }
 	 			     public void onResponseReceived(Request request, Response response) {
 	 			         if (200 == response.getStatusCode()) {
 	 			             String rt = response.getText();
 	 			             update(rt); //METHOD CALL TO DO SOMETHING WITH RESPONSE TEXT
 	 			         } else {
-	 			 Window.alert("Couldn't retrieve JSON (" + response.getStatusText() + ")");
-	 			 } }
+	 			        	 Window.alert("Couldn't retrieve JSON (" + response.getStatusText() + ")"); 
+	 			        	 pPanel.hide(); //needed so that user can access stuff after this alert is thrown
+	 			         }
+	 			        }
 	 			   });
-	 			 } catch (RequestException e) {
+	 			 } 
+	 		   catch (RequestException e) {
 	 			 }
 	 		   pPanel.hide();
 	        	}
@@ -391,12 +405,9 @@ public class Gui implements EntryPoint{
 		return tempPanel;
 	}
 	
-	private String updateLabel(){
-		return "Updated String.";
-	}
-		/**
-		String tempString;
-		if (new Counts(moduleList).minConfigPoss()){
+	/*private String updateLabel(){
+		String tempString = null;
+		if (new counters(moduleList).minConfigPossible()){
 			tempString = "minimum configuration NOT possible";
 		}
 		else{
@@ -431,9 +442,8 @@ public class Gui implements EntryPoint{
     	jN = (JSONNumber) jO.get("Y");
     	y = jN.doubleValue();
       	boolean addModuleSucess = new ModuleMaker(moduleList).createModule((int)code, (int)x, (int)y, (int)turns, status);
-      	if(addModuleSucess){
+      	if(addModuleSucess)
       		sucessCounter++;
-      	}
     	}
     final PopupPanel sucesses = new PopupPanel();
     VerticalPanel tempSucesses = new VerticalPanel();
