@@ -33,14 +33,15 @@ public class weather{
     public static VerticalPanel getResponse(){
           String url = "http://api.wunderground.com/api/76618a56636e14ef/conditions/q/55811.json";
           url = URL.encode(url);
-  
+          //create vertical panel. This is what will be passed back to the user-class. 
           final VerticalPanel i = new VerticalPanel();
           
           final JsonpRequestBuilder jsonp = new JsonpRequestBuilder();
 
           jsonp.setCallbackParam("callback");
           jsonp.requestObject(url, new AsyncCallback<JavaScriptObject>() {
-             
+          //attempt to connect with WUNDERGROUND if it's unsucessful display a window "connection failed" else add the data to the 
+        	  //vertical panel that gets returned to the user-class
                   @Override
               public void onFailure(final Throwable caught) {
                   //Window.alert("JSONP onFailure");
@@ -57,12 +58,12 @@ public class weather{
       		  JSONValue visibility = jB.get("visibility_km");
       		  String sTemp = temp.toString();
       		  String sVisibility = visibility.toString();
-      		  sVisibility = sVisibility.substring(1);
-      		  sVisibility = sVisibility.substring(0, sVisibility.length()-1);
+      		  sVisibility = sVisibility.substring(1); //take off final quotation mark
+      		  sVisibility = sVisibility.substring(0, sVisibility.length()-1);//takes off the first character which is a quotation mark
       		  i.add(new Label("Tempature (in C): " + sTemp)); //TO VIEW 
       		  i.add(new Label("Visibility (in Km): " + sVisibility)); //TO VIEW 
-      		  i.add(new Image("img/wunderground.jpg"));
-      		  i.setWidth("6cm"); 
+      		  i.add(new Image("img/wunderground.jpg")); //add the image to credit wunderground for this information 
+      		  i.setWidth("6cm"); //set the width of the vertical panel to fit in the stacklayout (in the gui)
         }
              
           });

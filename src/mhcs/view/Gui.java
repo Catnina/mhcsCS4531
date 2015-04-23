@@ -54,15 +54,16 @@ import com.google.gwt.json.client.JSONString;
 
 public class Gui implements EntryPoint{
 	
-	public ModuleList moduleList;
-	Integer caseNumb;
-	//panel for configurations
-	SoundController soundController = new SoundController();
-	DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.CM);
-	TabLayoutPanel backPanel = new TabLayoutPanel(2, Unit.CM);
-	Label configPoss;
+	public ModuleList moduleList; // this is the module list!! It must be passed whenever we add (or remove) modules or print the map
+	Integer caseNumb; //this integer holds which test case we are running from NASA/ESA feed (for User Story 1) 
+	SoundController soundController = new SoundController(); // this enables the use of sound output at any place throught the GUI
+	DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.CM); // this is the dock that the main page is built off of
+	TabLayoutPanel backPanel = new TabLayoutPanel(2, Unit.CM);// this is the panel that allows movement between pages 
+															  //(such as main to configuration page etc) 
+	Label configPoss; //this label appears in the top left hand corner of the main page and tells if a minimum configuration is possible
 	
-	private String conditionString = "Usable";
+	//these are the add button listener values (become the value in the add fields) they are set to their inital states. 
+	private String conditionString = "Usable"; 
 	private Integer xNumb = 1;
 	private Integer yNumb = 1;
 	private Integer orientNumb = 0;
@@ -70,6 +71,12 @@ public class Gui implements EntryPoint{
 	   
 
 	
+	/*
+	 * (non-Javadoc)
+	 * @see com.google.gwt.core.client.EntryPoint#onModuleLoad()
+	 * this method starts the project; it initializes the project and gets everything ready. For example, it sets up the dockLayoutPanel, 
+	 * the back panel, the sound output and creates the login page. 
+	 */
 	   public void onModuleLoad() {	
 		   backPanel.add(dockPanel, "Main Page");
 		   RootLayoutPanel.get().add(backPanel);   
@@ -78,6 +85,11 @@ public class Gui implements EntryPoint{
 		   loginPage();
 	   }
 	   
+	   /*
+	    * the loginPage method makes the login page. If login credentials are correctly entered, the user will be redirected to the 
+	    * main page, otherwise they will be prompted to re-enter their password information. 
+	    * If the correct information is entered, sound outout will tell the user that they will hear a beep when a module is manually entered correctly
+	    */
 	   private void loginPage(){
 		   final PopupPanel login = new PopupPanel();
 		   login.setGlassEnabled(true);
@@ -109,7 +121,13 @@ public class Gui implements EntryPoint{
 		    });
 	   }
 
-
+/*
+ * makeMain method makes the home page. This methods adds data to the dock lyaout panel which includes, 
+ * the north panel: configurations possible and logout button
+ * the east panel: weather and ten-day alert
+ * the south panel: add module, get modules from NASA/ESA feed and other buttons. 
+ * the center panel: scrollPanel holding map.  
+ */
 	   private void makeMain(){	
 		   final HorizontalPanel southPanel = new HorizontalPanel();
 		   southPanel.setWidth("12cm");
@@ -124,19 +142,20 @@ public class Gui implements EntryPoint{
   //*******************************************	   
 		   Button addModule= new Button("Add Module", new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	addModuleMethod();
+            	addModuleMethod(); //caddModuleMehtod will set up the add module pop-up panel
             }
             });
 		   southPanel.add(addModule);
 		   Button removeModule = new Button ("Get Modules From NASA/ESA Feed", new ClickHandler() {
 	        public void onClick(ClickEvent event) {
-	        	getModulesFromNASAESAFeed();
+	        	getModulesFromNASAESAFeed(); //this method will get the data from NASA/ESA feed and return if it was sucessful
 		    }
 		    });
            southPanel.add(removeModule);
            Button getConfigs = new Button ("Get Configurations", new ClickHandler() {
    	        public void onClick(ClickEvent event) {
-   	        	getConfigurations();   		    }
+   	        	getConfigurations();   	//this button will direct the user to get cofigurations pop=up panel where they can view 4 configuratiosn	    
+   	        	}
    		    });
               southPanel.add(getConfigs);
            
@@ -150,9 +169,10 @@ public class Gui implements EntryPoint{
                	dockPanel.remove(stackPanel);
                	dockPanel.remove(sPanel);
                 loginPage();
-  		      }
+  		      } // this button removes all the data from the page and sends the system back to the login page. 
   		   });
-           configPoss = new Label("minimum configuration NOT possible");
+           configPoss = new Label("minimum configuration NOT possible"); // this button is inically set to not possible. 
+           										//it will be updated in the add method if a config. becomes possible. 
            northPanel.add(configPoss);
            northPanel.add(logoutButton);
            
@@ -160,8 +180,8 @@ public class Gui implements EntryPoint{
            //Navigation (east panel)
            //*******************************************
            VerticalPanel weatherPanel = new VerticalPanel();
-           weatherPanel = makeWeatherMethod();
-           VerticalPanel tenPanel = new VerticalPanel();
+           weatherPanel = makeWeatherMethod(); //within the weather class. 
+           VerticalPanel tenPanel = new VerticalPanel(); //adds the Vertical Panel that is reutrned from the makeWeatherMethod() 
            //tenPanel = makeTenMethod();
            stackPanel.add(weatherPanel, new HTML("Weather"),1.5);
            stackPanel.add(tenPanel, new HTML("10-Day Alert"), 1.5);
@@ -171,7 +191,7 @@ public class Gui implements EntryPoint{
            //*******************************************
            //SimplePanel sHolder = new SimplePanel();
            //sHolder.setSize("500px", "500px");
-           //sPanel.add(new ModuleMap().renderMap(moduleList)); 
+           //sPanel.add(new ModuleMap().renderMap(moduleList)); //adds the map within a scroll panel to the center of the dock layout
            //sHolder.add(sPanel);
            
            //*******************************************	   
@@ -200,7 +220,12 @@ public class Gui implements EntryPoint{
 	   
 	 
 	   
-	   
+	   /*
+	    * add module sets up a popup panel that provides the framework for adding a module manually to the system. 
+	    * for every field that will be manually entered, there is a listener to take that data from the field and pass it into
+	    * the createModule method (in module maker class) 
+	    * all fields are then added to the popuppanel and displayed. 
+	    */
 	private void addModuleMethod(){
 		final PopupPanel pPanel = new PopupPanel();
 		pPanel.setGlassEnabled(true);
@@ -210,9 +235,10 @@ public class Gui implements EntryPoint{
 		panel1.setWidth("6cm");
 	    Label configNumber = new Label("Module Identification Number");
 	    final TextBox configNumberInput = new TextBox(); 
-	    configNumberInput.addChangeHandler(new ChangeHandler() {
+	    configNumberInput.addChangeHandler(new ChangeHandler() { 
 			public void onChange(ChangeEvent event) {
-				configNumb = Integer.valueOf(configNumberInput.getText());			}
+				configNumb = Integer.valueOf(configNumberInput.getText());	
+				}
         }
         );
         Label coordinates = new Label("Coordinates");
@@ -236,7 +262,7 @@ public class Gui implements EntryPoint{
         final ListBox orientationSuggest = new ListBox();
         orientationSuggest.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
-			orientNumb = orientationSuggest.getSelectedIndex();	
+			orientNumb = orientationSuggest.getSelectedIndex();
 			}
         }
         );
@@ -274,8 +300,13 @@ public class Gui implements EntryPoint{
 	    //*****************************
 	    addModuleButton.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
+	        	 //PopupPanel temp1  = new PopupPanel();
+			        //temp1.add(new Label(configNumb + "   " + xNumb + "   " + yNumb + "   " + orientNumb + "   " + conditionString));
+			      	 //temp1.show();
 		      	boolean addModuleSucess = new ModuleMaker(moduleList).createModule(configNumb, xNumb, yNumb, orientNumb, conditionString);
-	    	  	  if(addModuleSucess){
+		      	//this statement puts all the data collected in teh above editable fields and passes it into the moduleMaker
+		      	if(addModuleSucess){
+		      		//if sucessful play sound, update configuration possible and close popup panel
 			        pPanel.hide();
 	    	  		Sound intro = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"/sounds/beep.mp3");
 			        intro.play();
@@ -285,11 +316,12 @@ public class Gui implements EntryPoint{
 					else{
 						configPoss.setText("minimum configuration possible!");
 					}
-			        //PopupPanel temp  = new PopupPanel();
-			        //temp.add(new Label("it works"));
+			        
 		      		//updateLabel();
 	    	  	  }
           	  	  else{
+          	  		  //if it's not sucessful, hid the popup panel, make a new popup that tells the user that they were unable
+          	  		  //to add the module; show THIS popup panel. 
         	          pPanel.hide();
 		      		  final PopupPanel tempPP = new PopupPanel();
 		      		  tempPP.setSize("5cm", "3cm");
@@ -311,6 +343,11 @@ public class Gui implements EntryPoint{
 		      });
 }
 	
+	
+	/*
+	 * get modules from NASA/ESA feed. Has the option of testCases 1-10 for the various test feeds. displays the listbox
+	 * and a button in the popup panel. the caseNumb holds the number of the testcase that is selected (initially 1)
+	 */
 	private void getModulesFromNASAESAFeed(){
 		final PopupPanel pPanel = new PopupPanel();
 		VerticalPanel vPanel = new VerticalPanel();
@@ -333,9 +370,12 @@ public class Gui implements EntryPoint{
 	    testCases.addItem("TestCase 8");
 	    testCases.addItem("TestCase 9");
 	    testCases.addItem("TestCase 10");
+	    //add tests cases to the list box, make a listener for the box; add this to the vertical panel
 	    vPanel.add(testCases);
 	    Button addModuleButton = new Button("Add");
 	    vPanel.add(addModuleButton);
+	    //make add module button; add it to the vertical panel. When add is clicked, it tries to connect
+	    //with with the NASA/ESA feed. 
 	    addModuleButton.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
 	        	String proxy = "http://www.d.umn.edu/~abrooks/Proxy.php?url=";
@@ -367,8 +407,11 @@ public class Gui implements EntryPoint{
 	    pPanel.show();
 	}
 	
-	
-	
+	/*
+	 * get configurations make the popuppanel that displays the 4 possible configurations. They are showed in a stackpanel. 
+	 * the first "stack" is minumum, the second is full. there are two configurations displayed in each category. This will be dipslayed
+	 * using the map feature. 
+	 */
 	private void getConfigurations(){
 		final PopupPanel pPanel = new PopupPanel();
 		pPanel.setSize("20cm", "15cm");
@@ -401,11 +444,19 @@ public class Gui implements EntryPoint{
 		pPanel.show();
 	}
 	
+	/*
+	 * this calls teh weather.getResponse() method from teh weather class. This gets the weather underground data. The getResponse
+	 * method returns a vertical panel which is then returned to the makeMain class. 
+	 */
 	private VerticalPanel makeWeatherMethod(){
 		return weather.getResponse();
 		
 	}
 	
+	/*
+	 * makeTenMethod make the vertical panel that displays the 10 day alert. This tells the astronauts when they need to re-calibrate
+	 * their machinary. 
+	 */
 	private VerticalPanel makeTenMethod(){
 		VerticalPanel tempPanel = new VerticalPanel();
 		//TODO 
@@ -425,7 +476,11 @@ public class Gui implements EntryPoint{
 	}*/
 	
 	
-	
+	/*
+	 * this method gets the data from the NASA/ESA feed and pasrses it for the information we are looking for; 
+	 * code, status, turns, x and y. 
+	 * displays a popup of how many modules have been entered successfully. 
+	 */
 	public void update(String rt) { 
     String sAll = rt;
     JSONArray jA =(JSONArray)JSONParser.parseLenient(sAll);

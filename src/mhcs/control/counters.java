@@ -15,6 +15,7 @@ import mhcs.model.StandardModule;
  */
 
 public class counters{
+	//initialize each counter to zero
 	Integer plain = 0;
 	Integer airlock = 0;
 	Integer hosp = 0;
@@ -31,6 +32,7 @@ public class counters{
 		Vector<Module> vMods = mList.getModules();getClass();
 		for (int i=0; i<=vMods.size(); i++){
 			Integer id = vMods.elementAt(i).getIdNumber();
+			//if the moudule falls between these number, a module is added to the type of module for example, plain
 			if(id >= 1 && id <= 40) 
 				plain++;
 			else if(id >= 61 && id <= 80)
@@ -51,13 +53,13 @@ public class counters{
 				airlock++;
 			else if (id >=181 && id <= 184)
 				hosp++;
-			else{;}
+			else{;}//if the number does not match, don't add anything. This shoulden't happen based on our add method
 		}
 	}
 	public boolean minConfigPossible(){
 		boolean toReturn = false; 
-		if (plain >=3){
-			if (airlock >=1){
+		if (plain >=3){ //if we have at least three plains, 1 airlock, 1 dorm, 1 food and water storage, 
+			if (airlock >=1){ //one sanitation, one power, 1 control and 1 canteen module, a minumum configuration is possible
 				if (dorm >=1){
 					if (food >=1){
 						if (sanit >=1){
@@ -73,6 +75,6 @@ public class counters{
 				
 			}
 		}
-		return toReturn;
+		return toReturn; //otherwise returns toReturn which is initialized to false. 
 	}
 }
