@@ -35,6 +35,15 @@ public abstract class Module{
 		return output;
 	}
 	
+	/**
+	 * Creates JSON compatible string representation of the module
+	 * @return JSON string representaion of module
+	 */
+	public String toJSONString() {
+		return "{code:" + idNumber + ",status:\"" + condition + "\",turns:" + orientation +
+				",X:" + xCoord + ",Y:" + yCoord + "}";
+	}
+	
 	// Getters and Setters
 	public Integer getIdNumber() {
 		return idNumber;
