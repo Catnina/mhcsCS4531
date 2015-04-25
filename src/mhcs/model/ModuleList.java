@@ -65,4 +65,20 @@ public class ModuleList {
 	public Set<Integer> getListOfModuleIds() {
 		return moduleTable.keySet();
 	}
+	
+	/**
+	 * Creates a full JSON representation of all modules in the list for saving
+	 * @return Full JSON list of modules
+	 */
+	public String toJSONString() {
+		String output = "[";
+		Collection<Module> modList = getModules();
+		for(Module iterator : modList) {
+			output += iterator.toJSONString();
+			output += ",";
+		}
+		output = output.substring(0, output.length() - 1) + "]";
+		
+		return output;
+	}
 }

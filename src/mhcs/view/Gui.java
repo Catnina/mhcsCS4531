@@ -14,6 +14,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.storage.client.Storage;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -54,6 +55,8 @@ import com.google.gwt.json.client.JSONString;
 
 public class Gui implements EntryPoint{
 	
+	private Storage moduleStore;
+	
 	public ModuleList moduleList; // this is the module list!! It must be passed whenever we add (or remove) modules or print the map
 	Integer caseNumb; //this integer holds which test case we are running from NASA/ESA feed (for User Story 1) 
 	SoundController soundController = new SoundController(); // this enables the use of sound output at any place throught the GUI
@@ -78,6 +81,9 @@ public class Gui implements EntryPoint{
 	 * the back panel, the sound output and creates the login page. 
 	 */
 	   public void onModuleLoad() {	
+		   moduleList = new ModuleList();
+		   moduleStore = Storage.getLocalStorageIfSupported();
+		   
 		   backPanel.add(dockPanel, "Main Page");
 		   RootLayoutPanel.get().add(backPanel);   
 		   soundController.setDefaultVolume(100);
@@ -201,6 +207,8 @@ public class Gui implements EntryPoint{
            dockPanel.addEast(stackPanel,6);
            dockPanel.addSouth(southPanel,2);
            //dockPanel.add(sHolder);
+           
+           loadModules();
 
 	   }
 
@@ -318,6 +326,8 @@ public class Gui implements EntryPoint{
 					}
 			        
 		      		//updateLabel();
+			        
+			        saveModules();
 	    	  	  }
           	  	  else{
           	  		  //if it's not sucessful, hid the popup panel, make a new popup that tells the user that they were unable
@@ -519,4 +529,42 @@ public class Gui implements EntryPoint{
     sucesses.add(tempSucesses);
     sucesses.show();
     }
+	
+	/**
+	 * Saves current modules to local store
+	 */
+	public void saveModules() {
+		if(moduleStore != null) {
+			moduleStore.setItem("modules", moduleList.toJSONString());
+		}
+	}
+	
+	/**
+	 * Loads Modules from local store onto the module list
+	 */
+	public void loadModules() {
+		String modules = moduleStore.getItem("modules");
+		JSONArray jA = (JSONArray) JSONParser.parseLenient(modules);
+		JSONNumber jN;
+		JSONString jS;
+		ModuleMaker make = new ModuleMaker(moduleList);
+		int idNumber, xCoordinate, yCoordinate, turnsToUpright;
+		String condition = null;
+		
+		for(int i = 0; i < jA.size(); i++) {
+			JSONObject jO = (JSONObject) jA.get(i);
+			jN = (JSONNumber) jO.get("code");
+			idNumber = (int) jN.doubleValue();
+			jS = (JSONString) jO.get("status");
+			condition = jS.stringValue();
+			jN = (JSONNumber) jO.get("turns");
+			turnsToUpright = (int) jN.doubleValue();
+			jN = (JSONNumber) jO.get("X");
+			xCoordinate = (int) jN.doubleValue();
+			jN = (JSONNumber) jO.get("Y");
+			yCoordinate = (int) jN.doubleValue();
+			make.createModule(idNumber, xCoordinate, yCoordinate, turnsToUpright, condition);
+		}
+		
+	}
 }
