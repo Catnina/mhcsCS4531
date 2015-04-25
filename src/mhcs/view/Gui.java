@@ -82,7 +82,6 @@ public class Gui implements EntryPoint{
 	 */
 	   public void onModuleLoad() {	
 		   moduleList = new ModuleList();
-		   moduleStore = Storage.getLocalStorageIfSupported();
 		   
 		   backPanel.add(dockPanel, "Main Page");
 		   RootLayoutPanel.get().add(backPanel);   
@@ -174,6 +173,7 @@ public class Gui implements EntryPoint{
                	dockPanel.remove(northPanel);
                	dockPanel.remove(stackPanel);
                	dockPanel.remove(sPanel);
+               	saveModules();
                 loginPage();
   		      } // this button removes all the data from the page and sends the system back to the login page. 
   		   });
@@ -534,6 +534,7 @@ public class Gui implements EntryPoint{
 	 * Saves current modules to local store
 	 */
 	public void saveModules() {
+		moduleStore.getLocalStorageIfSupported();
 		if(moduleStore != null) {
 			moduleStore.setItem("modules", moduleList.toJSONString());
 		}
