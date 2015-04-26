@@ -64,6 +64,7 @@ public class Gui implements EntryPoint{
 	TabLayoutPanel backPanel = new TabLayoutPanel(2, Unit.CM);// this is the panel that allows movement between pages 
 															  //(such as main to configuration page etc) 
 	Label configPoss; //this label appears in the top left hand corner of the main page and tells if a minimum configuration is possible
+	ModuleMap modMap = new ModuleMap();
 	
 	//these are the add button listener values (become the value in the add fields) they are set to their inital states. 
 	private String conditionString = "Usable"; 
@@ -87,6 +88,7 @@ public class Gui implements EntryPoint{
 		   RootLayoutPanel.get().add(backPanel);   
 		   soundController.setDefaultVolume(100);
 		   soundController.setPreferredSoundTypes(SoundType.HTML5);
+		   makeMain();
 		   loginPage();
 	   }
 	   
@@ -116,7 +118,7 @@ public class Gui implements EntryPoint{
 		        intro.play();
 		    	tb.setText("Redirecting to Main Page");
 		    	login.hide();
-		    	makeMain();
+		    	//makeMain();
 		    	}
 		    	else {
 		    		tb.setText("Please Re-Enter Password");
@@ -139,7 +141,7 @@ public class Gui implements EntryPoint{
 		   final HorizontalPanel northPanel = new HorizontalPanel();
 		   northPanel.setWidth("12cm");
            final ScrollPanel sPanel = new ScrollPanel();
-           sPanel.setSize("500px", "500px");
+           sPanel.setSize("900px", "650px");
            final StackLayoutPanel stackPanel = new StackLayoutPanel(Unit.CM);
 		   
   //*******************************************	   
@@ -169,10 +171,6 @@ public class Gui implements EntryPoint{
            //*******************************************
            Button logoutButton= new Button("Log Out", new ClickHandler() {
                public void onClick(ClickEvent event) {
-            	dockPanel.remove(southPanel);
-               	dockPanel.remove(northPanel);
-               	dockPanel.remove(stackPanel);
-               	dockPanel.remove(sPanel);
                	saveModules();
                 loginPage();
   		      } // this button removes all the data from the page and sends the system back to the login page. 
@@ -196,9 +194,9 @@ public class Gui implements EntryPoint{
            //Center
            //*******************************************
            //SimplePanel sHolder = new SimplePanel();
-           //sHolder.setSize("500px", "500px");
-           //sPanel.add(new ModuleMap().renderMap(moduleList)); //adds the map within a scroll panel to the center of the dock layout
-           //sHolder.add(sPanel);
+           //sHolder.setSize("1000px", "700px");
+           sPanel.add(modMap.renderMap(moduleList)); //adds the map within a scroll panel to the center of the dock layout
+           backPanel.add(sPanel, "Module Map");
            
            //*******************************************	   
            //Add to dockPanel
@@ -209,8 +207,19 @@ public class Gui implements EntryPoint{
            //dockPanel.add(sHolder);
            
            loadModules();
+           
+           StackLayoutPanel configPanel = new StackLayoutPanel(Unit.CM);
+           configPanel = makeConfigPanel();
+           
+           backPanel.add(configPanel, "Configuration Menu");
 
 	   }
+
+	private StackLayoutPanel makeConfigPanel() {
+		StackLayoutPanel returnPanel = new StackLayoutPanel(Unit.CM);
+		
+		return returnPanel;
+}
 
 	/*   private void addModule(ClickHandler clickHandler) {
 		   // TODO Auto-generated method stub
@@ -316,6 +325,7 @@ public class Gui implements EntryPoint{
 		      	if(addModuleSucess){
 		      		//if sucessful play sound, update configuration possible and close popup panel
 			        pPanel.hide();
+			        modMap.renderMap(moduleList);
 	    	  		Sound intro = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"/sounds/beep.mp3");
 			        intro.play();
 			        if (new counters(moduleList).minConfigPossible()){
@@ -401,6 +411,7 @@ public class Gui implements EntryPoint{
 	 			         if (200 == response.getStatusCode()) {
 	 			             String rt = response.getText();
 	 			             update(rt); //METHOD CALL TO DO SOMETHING WITH RESPONSE TEXT
+	 			             pPanel.hide();
 	 			         } else {
 	 			        	 Window.alert("Couldn't retrieve JSON (" + response.getStatusText() + ")"); 
 	 			        	 pPanel.hide(); //needed so that user can access stuff after this alert is thrown
@@ -435,10 +446,40 @@ public class Gui implements EntryPoint{
 		chooseConfig.addItem("Full 1");
 		chooseConfig.addItem("Full 2");
 		verticalChoicePanel.add(chooseConfig);
-		Button chooseButton = new Button("Choose");
-		//button needs listener
+		Button chooseButton = new Button("Choose", new ClickHandler(){
+			  public void onClick(ClickEvent event){
+				  if (new counters(moduleList).minConfigPossible()){
+					  pPanel.hide();
+						final PopupPanel tempPP = new PopupPanel();
+						 VerticalPanel vPanelTemp = new VerticalPanel();
+						 vPanelTemp.add(new Label("making configuations"));
+			      		 Button tempButton = new Button("OK", new ClickHandler(){
+			      			 public void onClick(ClickEvent event){
+			      				 tempPP.hide();
+			      			 }
+			      		 });
+			      		 vPanelTemp.add(tempButton);
+			      		 tempPP.add(vPanelTemp);
+			      		 tempPP.show();	
+			      	}
+					else{
+						pPanel.hide();
+						final PopupPanel tempPP = new PopupPanel();
+						 VerticalPanel vPanelTemp = new VerticalPanel();
+						 vPanelTemp.add(new Label("Not enought modules to make configurations"));
+			      		 Button tempButton = new Button("OK", new ClickHandler(){
+			      			 public void onClick(ClickEvent event){
+			      				 tempPP.hide();
+			      			 }
+			      		 });
+			      		 vPanelTemp.add(tempButton);
+			      		 tempPP.add(vPanelTemp);
+			      		 tempPP.show();
+					}
+			  }
+		  });
+		verticalChoicePanel.add(chooseButton);
 		layoutPPanel.addEast(verticalChoicePanel,5);
-		layoutPPanel.addEast(chooseButton, 5);
 		
 		StackLayoutPanel configsPanel = new StackLayoutPanel(Unit.CM);
 		HorizontalPanel min = new HorizontalPanel();
@@ -519,7 +560,7 @@ public class Gui implements EntryPoint{
     	}
     final PopupPanel sucesses = new PopupPanel();
     VerticalPanel tempSucesses = new VerticalPanel();
-    tempSucesses.add(new Label("Number of Modules added Sucessfully: "+sucessCounter));
+    tempSucesses.add(new Label(sucessCounter + " modules added successfully."));
     Button tempButton = new Button("OK", new ClickHandler(){
 		  public void onClick(ClickEvent event){
 			  sucesses.hide();
