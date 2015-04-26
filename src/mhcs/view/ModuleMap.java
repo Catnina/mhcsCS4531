@@ -19,11 +19,17 @@ import com.google.gwt.user.client.ui.Image;
  */
 public class ModuleMap {
 	private Grid map;
+	static private int height = 50;
+	static private int width = 100;
 	
 	public ModuleMap() {
-		map = new Grid(50, 100);
-		//map.getCellFormatter().setStyleName(50,100,"tableCell");
+		map = new Grid(height, width);
 		map.addStyleName("background");
+		for(int row = 0; row < height ; row++) {
+			for(int column = 0; column < width; column++) {
+				map.getCellFormatter().setStyleName(row, column, "tableCell");
+			}
+		}
 	}
 	
 	/**
@@ -43,7 +49,6 @@ public class ModuleMap {
     	    img.addClickHandler(new ClickHandler() {
     	    	  public void onClick(ClickEvent event) {
     	    		  ModuleImage temp = (ModuleImage)event.getSource();
-    	    		  //TO-DO: Add pop up window that displays module details.
     	    		  ModuleInfoPopup p = new ModuleInfoPopup(temp.getMod());
     	    		  p.setPopupPosition(event.getClientX(), event.getClientY());
     	    		  p.show();
