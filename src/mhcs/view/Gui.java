@@ -85,6 +85,7 @@ public class Gui implements EntryPoint{
 	 */
 	   public void onModuleLoad() {	
 		   moduleList = new ModuleList();
+		   moduleStore = Storage.getLocalStorageIfSupported();
 		   
 		   backPanel.add(dockPanel, "Main Page");
 		   RootLayoutPanel.get().add(backPanel);   
@@ -146,7 +147,7 @@ public class Gui implements EntryPoint{
 		   
 		   loginPage();
 		   
-		   //loadModules(); //code wasn't running when this was uncommented...
+		   loadModules();
 		   
 		   final HorizontalPanel southPanel = new HorizontalPanel();
 		   southPanel.setWidth("12cm");
@@ -295,7 +296,7 @@ public class Gui implements EntryPoint{
            dockPanel.addSouth(southPanel,2);
            //dockPanel.add(sHolder);
            
-           loadModules();
+           //loadModules(); //Not needed here... Why load modules after the map has been rendered?
            
            StackLayoutPanel configPanel = new StackLayoutPanel(Unit.CM);
            configPanel = makeConfigPanel();
@@ -726,7 +727,7 @@ public class Gui implements EntryPoint{
 	 * Saves current modules to local store
 	 */
 	public void saveModules() {
-		moduleStore.getLocalStorageIfSupported();
+		//moduleStore = Storage.getLocalStorageIfSupported();
 		if(moduleStore != null) {
 			moduleStore.setItem("modules", moduleList.toJSONString());
 		}
@@ -736,7 +737,7 @@ public class Gui implements EntryPoint{
 	 * Loads Modules from local store onto the module list
 	 */
 	public void loadModules() {
-		moduleStore = Storage.getLocalStorageIfSupported();
+		//moduleStore = Storage.getLocalStorageIfSupported();
 		if(moduleStore != null) {
 			String modules = moduleStore.getItem("modules");
 			JSONArray jA = (JSONArray) JSONParser.parseLenient(modules);
