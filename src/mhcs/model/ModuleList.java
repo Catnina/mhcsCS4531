@@ -78,7 +78,7 @@ public class ModuleList {
 			output += ",";
 		}
 		
-		if(output.length() > 1) {
+		if(output.length() > 2) {
 			output = output.substring(0, output.length() - 1);
 		}
 		output += "]";

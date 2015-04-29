@@ -55,7 +55,7 @@ public class ModuleMap {
     	    	  }
     	    });
 			
-			map.setWidget(mod.getYCoordinate(), mod.getXCoordinate(), img);
+			map.setWidget(50 - mod.getYCoordinate(), mod.getXCoordinate() - 1, img);
 		}
 		return map;
 	}

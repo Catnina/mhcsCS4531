@@ -85,7 +85,8 @@ public class Gui implements EntryPoint{
 	 */
 	   public void onModuleLoad() {	
 		   moduleList = new ModuleList();
-		   moduleStore = Storage.getLocalStorageIfSupported();
+		   //moduleStore = Storage.getLocalStorageIfSupported();
+		   
 		   
 		   backPanel.add(dockPanel, "Main Page");
 		   RootLayoutPanel.get().add(backPanel);   
@@ -414,6 +415,7 @@ public class Gui implements EntryPoint{
 		      		//if sucessful play sound, update configuration possible and close popup panel
 			        pPanel.hide();
 			        modMap.renderMap(moduleList);
+			        saveModules();
 	    	  		Sound intro = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"/sounds/beep.mp3");
 			        intro.play();
 			        if (new counters(moduleList).minConfigPossible()){
@@ -425,7 +427,6 @@ public class Gui implements EntryPoint{
 			        
 		      		//updateLabel();
 			        
-			        saveModules();
 	    	  	  }
           	  	  else{
           	  		  //if it's not sucessful, hid the popup panel, make a new popup that tells the user that they were unable
@@ -727,7 +728,7 @@ public class Gui implements EntryPoint{
 	 * Saves current modules to local store
 	 */
 	public void saveModules() {
-		//moduleStore = Storage.getLocalStorageIfSupported();
+		moduleStore = Storage.getLocalStorageIfSupported();
 		if(moduleStore != null) {
 			moduleStore.setItem("modules", moduleList.toJSONString());
 		}
@@ -737,29 +738,31 @@ public class Gui implements EntryPoint{
 	 * Loads Modules from local store onto the module list
 	 */
 	public void loadModules() {
-		//moduleStore = Storage.getLocalStorageIfSupported();
+		moduleStore = Storage.getLocalStorageIfSupported();
 		if(moduleStore != null) {
 			String modules = moduleStore.getItem("modules");
-			JSONArray jA = (JSONArray) JSONParser.parseLenient(modules);
-			JSONNumber jN;
-			JSONString jS;
-			ModuleMaker make = new ModuleMaker(moduleList);
-			int idNumber, xCoordinate, yCoordinate, turnsToUpright;
-			String condition = null;
-			
-			for(int i = 0; i < jA.size(); i++) {
-				JSONObject jO = (JSONObject) jA.get(i);
-				jN = (JSONNumber) jO.get("code");
-				idNumber = (int) jN.doubleValue();
-				jS = (JSONString) jO.get("status");
-				condition = jS.stringValue();
-				jN = (JSONNumber) jO.get("turns");
-				turnsToUpright = (int) jN.doubleValue();
-				jN = (JSONNumber) jO.get("X");
-				xCoordinate = (int) jN.doubleValue();
-				jN = (JSONNumber) jO.get("Y");
-				yCoordinate = (int) jN.doubleValue();
-				make.createModule(idNumber, xCoordinate, yCoordinate, turnsToUpright, condition);
+			if(modules != null) {
+				JSONArray jA = (JSONArray) JSONParser.parseLenient(modules);
+				JSONNumber jN;
+				JSONString jS;
+				ModuleMaker make = new ModuleMaker(moduleList);
+				int idNumber, xCoordinate, yCoordinate, turnsToUpright;
+				String condition = null;
+				
+				for(int i = 0; i < jA.size(); i++) {
+					JSONObject jO = (JSONObject) jA.get(i);
+					jN = (JSONNumber) jO.get("code");
+					idNumber = (int) jN.doubleValue();
+					jS = (JSONString) jO.get("status");
+					condition = jS.stringValue();
+					jN = (JSONNumber) jO.get("turns");
+					turnsToUpright = (int) jN.doubleValue();
+					jN = (JSONNumber) jO.get("X");
+					xCoordinate = (int) jN.doubleValue();
+					jN = (JSONNumber) jO.get("Y");
+					yCoordinate = (int) jN.doubleValue();
+					make.createModule(idNumber, xCoordinate, yCoordinate, turnsToUpright, condition);
+				}
 			}
 		}
 	}
