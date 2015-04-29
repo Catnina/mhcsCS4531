@@ -1,8 +1,11 @@
 package mhcs.view;
 
 
+import java.util.Date;
+
 import mhcs.model.ModuleList;
 import mhcs.model.ModuleMaker;
+import mhcs.control.TenDay;
 import mhcs.control.counters;
 import mhcs.control.weather;
 
@@ -14,11 +17,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -39,13 +44,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.allen_sauer.gwt.voices.client.Sound;
 import com.allen_sauer.gwt.voices.client.SoundController;
 import com.allen_sauer.gwt.voices.client.SoundType;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray; 
 import com.google.gwt.json.client.JSONNumber; 
 import com.google.gwt.json.client.JSONObject; 
@@ -56,7 +58,7 @@ import com.google.gwt.json.client.JSONString;
 public class Gui implements EntryPoint{
 	
 	private Storage moduleStore;
-	
+	Date endDate, currentDate;
 	public ModuleList moduleList; // this is the module list!! It must be passed whenever we add (or remove) modules or print the map
 	Integer caseNumb; //this integer holds which test case we are running from NASA/ESA feed (for User Story 1) 
 	SoundController soundController = new SoundController(); // this enables the use of sound output at any place throught the GUI
@@ -89,7 +91,7 @@ public class Gui implements EntryPoint{
 		   soundController.setDefaultVolume(100);
 		   soundController.setPreferredSoundTypes(SoundType.HTML5);
 		   makeMain();
-		   loginPage();
+		   //loginPage();
 	   }
 	   
 	   /*
@@ -101,11 +103,15 @@ public class Gui implements EntryPoint{
 		   final PopupPanel login = new PopupPanel();
 		   login.setGlassEnabled(true);
 		   login.center();
+		   final TextBox utb = new TextBox(); 
+		   final Label tbUser = new Label("Enter Username");
 		   final PasswordTextBox ptb = new PasswordTextBox();
 		   final Label tb = new Label("Enter Password:");
 		   final VerticalPanel vPanel = new VerticalPanel();
 		   vPanel.setWidth("4cm");
 		   final Button enter = new Button("Enter");
+		    vPanel.add(tbUser);
+		    vPanel.add(utb);
 		    vPanel.add(tb);
 		    vPanel.add(ptb);
 		    vPanel.add(enter);
@@ -113,19 +119,20 @@ public class Gui implements EntryPoint{
 		    enter.addClickHandler(new ClickHandler() {
 		    	public void onClick(ClickEvent event) { 
 		    	String s = ptb.getText();
-		    	if (s.equals("mhcs")) {
+		    	String userName = utb.getText();
+		    	if (s.equals("mhcs") && userName.equals("Catania")) {
 		        Sound intro = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"/sounds/intro.mp3");
 		        intro.play();
-		    	tb.setText("Redirecting to Main Page");
-		    	login.hide();
-		    	//makeMain();
+			    	login.hide();
 		    	}
 		    	else {
-		    		tb.setText("Please Re-Enter Password");
+		    		tb.setText("Incorrect Username or Password");
+		    		utb.setText("");
 		    		ptb.setText("");
 		    		}
 		    	}
 		    });
+		    login.show();
 	   }
 
 /*
@@ -136,6 +143,9 @@ public class Gui implements EntryPoint{
  * the center panel: scrollPanel holding map.  
  */
 	   private void makeMain(){	
+		   
+		   //loadModules(); //code wasn't running when this was uncommented...
+		   
 		   final HorizontalPanel southPanel = new HorizontalPanel();
 		   southPanel.setWidth("12cm");
 		   final HorizontalPanel northPanel = new HorizontalPanel();
@@ -183,12 +193,89 @@ public class Gui implements EntryPoint{
            //*******************************************	   
            //Navigation (east panel)
            //*******************************************
+           endDate = TenDay.createTenDay();
+           currentDate = new Date();
            VerticalPanel weatherPanel = new VerticalPanel();
-           weatherPanel = makeWeatherMethod(); //within the weather class. 
-           VerticalPanel tenPanel = new VerticalPanel(); //adds the Vertical Panel that is reutrned from the makeWeatherMethod() 
-           //tenPanel = makeTenMethod();
+           weatherPanel = makeWeatherMethod(); //within the weather class.
+           
+           FlowPanel tenPanel = new FlowPanel();
+		   tenPanel.setWidth("200px");
+		   final Grid tenAlert = new Grid(3,1);
+		   
+		   //shows when the next date you have to recalibrate is
+		   FlowPanel topAlert = new FlowPanel();
+		   topAlert.setWidth("200px");
+		   topAlert = makeTopTenMethod(endDate);
+		   
+		   //creates the countdown to the next needed recalibrate date
+		   FlowPanel middleAlert = new FlowPanel();
+		   middleAlert.setWidth("200px");
+		   middleAlert = makeMiddleTenMethod(currentDate, endDate);
+		   
+		   //Recalibrate button that stores the new 10 Day
+		   //and resets the topAlert and middleAlert information
+		   Button Recalibrate = new Button("Recalibrate");
+		    Recalibrate.addClickHandler(new ClickHandler() {
+		        public void onClick(ClickEvent event) {
+		        	//updates and gets the new 10 day
+		        	TenDay.tenDayUpdate();
+		        	Date newTenDay = TenDay.getTenDay();
+		        	Date currentDate = new Date();
+		        	
+		        	//shows when the next date you have to recalibrate is
+		        	FlowPanel topAlert = new FlowPanel();
+		  		    topAlert.setWidth("200px");
+		  		    topAlert = makeTopTenMethod(newTenDay);
+		  		    tenAlert.setWidget(0,0,topAlert);
+		  		    
+		  		    //creates the countdown to the next needed recalibrate date
+		        	FlowPanel middleAlert = new FlowPanel();
+		 		   	middleAlert.setWidth("200px");
+		 		   	middleAlert = makeMiddleTenMethod(currentDate, newTenDay);
+		            tenAlert.setWidget(1,0,middleAlert);
+		            
+		            //a popup that shows what the new recalibrate date is
+		            PopupPanel pPanel = new PopupPanel();
+		    		pPanel.setSize("10cm", "1cm");
+		    		pPanel.setPopupPosition(500, 250);
+		    		pPanel.setGlassEnabled(true);
+		    		pPanel.setAutoHideEnabled(true);
+		    		pPanel.setWidget(new Label(newTenDay.toString() + " is the new Update date"));
+		    		pPanel.show();
+		        }
+		    });	   
+		   
+		    //gets the information onto the GUI
+		    tenAlert.setWidget(0,0,topAlert);
+		    tenAlert.setWidget(1,0,middleAlert);
+		    tenAlert.setWidget(2,0,Recalibrate);
+		    tenPanel.add(tenAlert);
            stackPanel.add(weatherPanel, new HTML("Weather"),1.5);
            stackPanel.add(tenPanel, new HTML("10-Day Alert"), 1.5);
+           
+         //*******************************************	   
+           //Timer that updates the east panel every 30 seconds
+           //Used to update the count down for the ten day alert
+           //*******************************************
+	          
+           Timer t = new Timer() {
+      			//@Override
+      			public void run() {
+      				Date newTenDay = TenDay.getTenDay();
+      				Date currentDate = new Date();
+      				FlowPanel topAlert = new FlowPanel();
+      			    topAlert.setWidth("200px");
+      			    topAlert = makeTopTenMethod(newTenDay);
+      			    
+		        	FlowPanel middleAlert = new FlowPanel();
+		 		   	middleAlert.setWidth("200px");
+		 		   	middleAlert = makeMiddleTenMethod(currentDate, newTenDay);
+		            tenAlert.setWidget(1,0,middleAlert);
+      			}
+      			};
+      			t.scheduleRepeating(30000);
+      			
+                  
            
            //*******************************************	   
            //Center
@@ -212,6 +299,7 @@ public class Gui implements EntryPoint{
            configPanel = makeConfigPanel();
            
            backPanel.add(configPanel, "Configuration Menu");
+           loginPage();
 
 	   }
 
@@ -286,7 +374,6 @@ public class Gui implements EntryPoint{
 	    orientationSuggest.addItem("None");
 	    orientationSuggest.addItem("One Rotation");
 	    orientationSuggest.addItem("Two Rotations");
-	    orientationSuggest.addItem("Three Rotations");
         final ListBox conditionSuggest = new ListBox();
         conditionSuggest.addChangeHandler(new ChangeHandler() {
 			public void onChange(ChangeEvent event) {
@@ -504,14 +591,78 @@ public class Gui implements EntryPoint{
 		
 	}
 	
-	/*
-	 * makeTenMethod make the vertical panel that displays the 10 day alert. This tells the astronauts when they need to re-calibrate
-	 * their machinary. 
+	/**
+	 * creates the information that shows the date that needs to be recalibrated on
+	 * @param Date The end date to recalibrate on
+	 * @return The flowpanel grid to be put into a grid
 	 */
-	private VerticalPanel makeTenMethod(){
-		VerticalPanel tempPanel = new VerticalPanel();
-		//TODO 
-		return tempPanel;
+	private FlowPanel makeTopTenMethod(Date endDate) {
+		FlowPanel fp = new FlowPanel(); 
+		Grid top = new Grid(2,1);
+	    top.setWidth("200px");
+	    Label recalDate1 = new Label("Need to Recalibrate on: ");
+	    recalDate1.setWidth("200px");
+	    Label recalDate2 = new Label(endDate.toString());
+	    recalDate2.setWidth("200px");
+	    top.setWidget(0, 0, recalDate1);
+	    top.setWidget(1, 0, recalDate2);
+	    fp.add(top);
+	    return fp;
+	}
+	
+	/**
+	 * creates the information that shows the countdown to when recalibration is needed
+	 * @param Date, Date The current and end date
+	 * @return The flowpanel grid to be put into a grid
+	 */
+	private FlowPanel makeMiddleTenMethod(Date currentDate, Date endDate) {
+		FlowPanel fp = new FlowPanel();
+		Grid g_details = new Grid(1,2);
+        g_details.setWidth("200px");
+		Grid left = new Grid(4,1);
+        left.setWidth("100px");
+        left.setWidget(0, 0, new Label("DAYS"));
+        left.setWidget(1, 0, new Label("HOURS"));
+        left.setWidget(2, 0, new Label("MINUTES"));
+        left.setWidget(3, 0, new Label("SECONDS"));
+        g_details.setWidget(0, 0, left);
+        
+		long diff = endDate.getTime() - currentDate.getTime();
+        boolean recalibrate = isRecalibrate();
+        if (recalibrate) {
+        	diff = 0;
+        }
+		Grid right = new Grid(4,1);
+        right.setWidth("100px");
+        long diffSeconds = diff / 1000 % 60;
+        long diffMinutes = diff / (60 * 1000) % 60;
+        long diffHours = diff / (60 * 60 * 1000) % 24;
+        int diffInDays = (int) ((diff) / (1000 * 60 * 60 * 24));
+        
+        right.setWidget(0, 0, new Label(Integer.toString(diffInDays)));
+        right.setWidget(1, 0, new Label(Long.toString(diffHours)));
+        right.setWidget(2, 0, new Label(Long.toString(diffMinutes)));	
+        right.setWidget(3, 0, new Label(Long.toString(diffSeconds)));
+        
+        g_details.setWidget(0, 1, right);
+        fp.add(g_details);
+        return fp;
+        
+	}
+
+	/**
+	 * checks to see if recalibration is needed
+	 * @param none
+	 * @return A boolean to say if recalibration is needed
+	 */
+	public boolean isRecalibrate() {
+		boolean recalibrate = false;
+		long diff = endDate.getTime() - currentDate.getTime();
+        if (diff <= 0) {
+        	Window.alert("Need to recalibrate");
+        	recalibrate = true;
+        }
+		return recalibrate;
 	}
 	
 	/*private String updateLabel(){
@@ -585,28 +736,30 @@ public class Gui implements EntryPoint{
 	 * Loads Modules from local store onto the module list
 	 */
 	public void loadModules() {
-		String modules = moduleStore.getItem("modules");
-		JSONArray jA = (JSONArray) JSONParser.parseLenient(modules);
-		JSONNumber jN;
-		JSONString jS;
-		ModuleMaker make = new ModuleMaker(moduleList);
-		int idNumber, xCoordinate, yCoordinate, turnsToUpright;
-		String condition = null;
-		
-		for(int i = 0; i < jA.size(); i++) {
-			JSONObject jO = (JSONObject) jA.get(i);
-			jN = (JSONNumber) jO.get("code");
-			idNumber = (int) jN.doubleValue();
-			jS = (JSONString) jO.get("status");
-			condition = jS.stringValue();
-			jN = (JSONNumber) jO.get("turns");
-			turnsToUpright = (int) jN.doubleValue();
-			jN = (JSONNumber) jO.get("X");
-			xCoordinate = (int) jN.doubleValue();
-			jN = (JSONNumber) jO.get("Y");
-			yCoordinate = (int) jN.doubleValue();
-			make.createModule(idNumber, xCoordinate, yCoordinate, turnsToUpright, condition);
+		moduleStore = Storage.getLocalStorageIfSupported();
+		if(moduleStore != null) {
+			String modules = moduleStore.getItem("modules");
+			JSONArray jA = (JSONArray) JSONParser.parseLenient(modules);
+			JSONNumber jN;
+			JSONString jS;
+			ModuleMaker make = new ModuleMaker(moduleList);
+			int idNumber, xCoordinate, yCoordinate, turnsToUpright;
+			String condition = null;
+			
+			for(int i = 0; i < jA.size(); i++) {
+				JSONObject jO = (JSONObject) jA.get(i);
+				jN = (JSONNumber) jO.get("code");
+				idNumber = (int) jN.doubleValue();
+				jS = (JSONString) jO.get("status");
+				condition = jS.stringValue();
+				jN = (JSONNumber) jO.get("turns");
+				turnsToUpright = (int) jN.doubleValue();
+				jN = (JSONNumber) jO.get("X");
+				xCoordinate = (int) jN.doubleValue();
+				jN = (JSONNumber) jO.get("Y");
+				yCoordinate = (int) jN.doubleValue();
+				make.createModule(idNumber, xCoordinate, yCoordinate, turnsToUpright, condition);
+			}
 		}
-		
 	}
 }
