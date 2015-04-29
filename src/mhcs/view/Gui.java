@@ -89,7 +89,7 @@ public class Gui implements EntryPoint{
 		   backPanel.add(dockPanel, "Main Page");
 		   RootLayoutPanel.get().add(backPanel);   
 		   soundController.setDefaultVolume(100);
-		   soundController.setPreferredSoundTypes(SoundType.HTML5);
+		   //soundController.setPreferredSoundTypes(SoundType.HTML5);
 		   makeMain();
 		   //loginPage();
 	   }
@@ -143,6 +143,8 @@ public class Gui implements EntryPoint{
  * the center panel: scrollPanel holding map.  
  */
 	   private void makeMain(){	
+		   
+		   loginPage();
 		   
 		   //loadModules(); //code wasn't running when this was uncommented...
 		   
@@ -299,8 +301,6 @@ public class Gui implements EntryPoint{
            configPanel = makeConfigPanel();
            
            backPanel.add(configPanel, "Configuration Menu");
-           loginPage();
-
 	   }
 
 	private StackLayoutPanel makeConfigPanel() {
