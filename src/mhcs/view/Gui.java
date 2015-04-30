@@ -84,6 +84,7 @@ public class Gui implements EntryPoint{
 	 * the back panel, the sound output and creates the login page. 
 	 */
 	   public void onModuleLoad() {	
+		   caseNumb = 1;
 		   moduleList = new ModuleList();
 		   //moduleStore = Storage.getLocalStorageIfSupported();
 		   
@@ -464,12 +465,7 @@ public class Gui implements EntryPoint{
 		pPanel.setAutoHideEnabled(true);
 		pPanel.setSize("3cm", "2cm");
 		final ListBox testCases = new ListBox();
-        testCases.addChangeHandler(new ChangeHandler() {
-			public void onChange(ChangeEvent event) {
-				caseNumb = testCases.getSelectedIndex()+1;	
-			}
-        });
-	    testCases.addItem("TestCase 1");
+		testCases.addItem("TestCase 1");
 	    testCases.addItem("TestCase 2");
 	    testCases.addItem("TestCase 3");
 	    testCases.addItem("TestCase 4");
@@ -479,6 +475,13 @@ public class Gui implements EntryPoint{
 	    testCases.addItem("TestCase 8");
 	    testCases.addItem("TestCase 9");
 	    testCases.addItem("TestCase 10");
+	    testCases.setVisibleItemCount(10);
+        testCases.addChangeHandler(new ChangeHandler() {
+			public void onChange(ChangeEvent event) {
+				caseNumb = testCases.getSelectedIndex()+1;	
+			}
+        });
+	    
 	    //add tests cases to the list box, make a listener for the box; add this to the vertical panel
 	    vPanel.add(testCases);
 	    Button addModuleButton = new Button("Add");
@@ -486,9 +489,10 @@ public class Gui implements EntryPoint{
 	    //make add module button; add it to the vertical panel. When add is clicked, it tries to connect
 	    //with with the NASA/ESA feed. 
 	    addModuleButton.addClickHandler(new ClickHandler() {
+	    	//Integer caseNumber = testCases.getSelectedIndex()+1;
 	        public void onClick(ClickEvent event) {
 	        	String proxy = "http://www.d.umn.edu/~maddenj/Proxy.php?url=";
-	 		   String url = proxy+"http://www.d.umn.edu/~abrooks/SomeTests.php?q="+caseNumb;
+	 		   String url = proxy+"http://www.d.umn.edu/~abrooks/SomeTests.php?q="+(testCases.getSelectedIndex()+1);
 	 		   url = URL.encode(url);
 	 		   RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url); 
 	 		   try {
@@ -496,11 +500,11 @@ public class Gui implements EntryPoint{
 	 				   public void onError(Request request, Throwable exception) { Window.alert("onError: Couldn't retrieve JSON");
 	 				   pPanel.hide();//does this help? YES! Otherwise can't click other buttons after this gets thrown
 	 				   }
-	 			     public void onResponseReceived(Request request, Response response) {
+	 			      public void onResponseReceived(Request request, Response response) {
 	 			         if (200 == response.getStatusCode()) {
 	 			             String rt = response.getText();
 	 			             update(rt); //METHOD CALL TO DO SOMETHING WITH RESPONSE TEXT
-	 				        modMap.renderMap(moduleList);
+	 				         modMap.renderMap(moduleList);
 	 			             pPanel.hide();
 	 			         } else {
 	 			        	 Window.alert("Couldn't retrieve JSON (" + response.getStatusText() + ")"); 
@@ -510,7 +514,6 @@ public class Gui implements EntryPoint{
 	 			   });
 	 			 } 
 	 		   catch (RequestException e) {
-	 			  Window.alert("RequestException: Couldn't retrieve JSON");
 	 			 }
 	 		   pPanel.hide();
 	        	}
