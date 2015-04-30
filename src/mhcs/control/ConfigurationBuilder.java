@@ -51,7 +51,7 @@ public class ConfigurationBuilder {
 		for(Integer idNum : modList.getListOfModuleIds()) {
 			if(idNum <= 40 && idNum >= 1) {
 				Module plainMod = modList.getModuleByIdNumber(idNum);
-				if(plainMod.getCondition().equals("Usable")) {
+				if(plainMod.getCondition().equals("Usable") || plainMod.getCondition().equals("undamaged")) {
 					result.add(plainMod);
 				}
 			}
@@ -1015,12 +1015,12 @@ public class ConfigurationBuilder {
 			inQuestion = moduleVector.elementAt(index);
 			if( inQuestion.getType().equals(type) ) {
 				if( !used.contains(inQuestion) ) {
-					if(!inQuestion.getCondition().equals("Usable")){ 
-						used.add(inQuestion);
-					} else {
+					if(inQuestion.getCondition().equals("Usable") || inQuestion.getCondition().equals("undamaged")){ 
 						used.add(inQuestion);
 						result = inQuestion;
 						found = true;
+					} else {
+						used.add(inQuestion);
 					}
 				}
 			}
