@@ -487,8 +487,8 @@ public class Gui implements EntryPoint{
 	    //with with the NASA/ESA feed. 
 	    addModuleButton.addClickHandler(new ClickHandler() {
 	        public void onClick(ClickEvent event) {
-	        	String proxy = "http://www.d.umn.edu/~abrooks/Proxy.php?url=";
-	 		   String url = proxy+"http://www.d.umn.edu/~abrooks/SomeTests.php?q="+"caseNumb";
+	        	String proxy = "http://www.d.umn.edu/~maddenj/Proxy.php?url=";
+	 		   String url = proxy+"http://www.d.umn.edu/~abrooks/SomeTests.php?q="+caseNumb;
 	 		   url = URL.encode(url);
 	 		   RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url); 
 	 		   try {
@@ -500,6 +500,7 @@ public class Gui implements EntryPoint{
 	 			         if (200 == response.getStatusCode()) {
 	 			             String rt = response.getText();
 	 			             update(rt); //METHOD CALL TO DO SOMETHING WITH RESPONSE TEXT
+	 				        modMap.renderMap(moduleList);
 	 			             pPanel.hide();
 	 			         } else {
 	 			        	 Window.alert("Couldn't retrieve JSON (" + response.getStatusText() + ")"); 
@@ -509,6 +510,7 @@ public class Gui implements EntryPoint{
 	 			   });
 	 			 } 
 	 		   catch (RequestException e) {
+	 			  Window.alert("RequestException: Couldn't retrieve JSON");
 	 			 }
 	 		   pPanel.hide();
 	        	}
