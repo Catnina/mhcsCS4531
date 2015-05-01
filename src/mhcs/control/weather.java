@@ -33,11 +33,13 @@ public class weather{
     public static VerticalPanel getResponse(){
           String url = "http://api.wunderground.com/api/76618a56636e14ef/conditions/q/55811.json";
           url = URL.encode(url);
+          String url2 = "http://api.wunderground.com/api/76618a56636e14ef/astronomy/q/US/MN/Duluth.json";
+          url2 = URL.encode(url2);
           //create vertical panel. This is what will be passed back to the user-class. 
           final VerticalPanel i = new VerticalPanel();
           
           final JsonpRequestBuilder jsonp = new JsonpRequestBuilder();
-
+          
           jsonp.setCallbackParam("callback");
           jsonp.requestObject(url, new AsyncCallback<JavaScriptObject>() {
           //attempt to connect with WUNDERGROUND if it's unsucessful display a window "connection failed" else add the data to the 
@@ -62,11 +64,42 @@ public class weather{
       		  sVisibility = sVisibility.substring(0, sVisibility.length()-1);//takes off the first character which is a quotation mark
       		  i.add(new Label("Tempature (in C): " + sTemp)); //TO VIEW 
       		  i.add(new Label("Visibility (in Km): " + sVisibility)); //TO VIEW 
-      		  i.add(new Image("img/wunderground.jpg")); //add the image to credit wunderground for this information 
+        }
+             
+          });     
+          
+          jsonp.setCallbackParam("callback");
+          jsonp.requestObject(url2, new AsyncCallback<JavaScriptObject>() {
+          //attempt to connect with WUNDERGROUND if it's unsucessful display a window "connection failed" else add the data to the 
+        	  //vertical panel that gets returned to the user-class
+                  @Override
+              public void onFailure(final Throwable caught) {
+                  //Window.alert("JSONP onFailure");
+                  i.add(new Label("wunderground connection failed."));
+              }
+
+              @Override
+              public void onSuccess(JavaScriptObject s) {
+              JSONObject obj = new JSONObject(s);
+              String result = obj.toString();
+      		  JSONObject jA =(JSONObject)JSONParser.parseLenient(result); JSONValue jTry = jA.get("sun_phase");
+      		  JSONObject jA2 =(JSONObject)JSONParser.parseLenient(jTry.toString()); JSONValue jTry2 = jA2.get("sunset");
+      		  JSONObject jB = (JSONObject)JSONParser.parseLenient(jTry2.toString());
+      		  JSONValue hour = jB.get("hour");
+      		  JSONValue minute = jB.get("minute");
+      		  String hourString = hour.toString();
+      		  String minuteString = minute.toString();
+      		  hourString = hourString.substring(1); //take off final quotation mark
+      		  hourString = hourString.substring(0, hourString.length()-1);//takes off the first character which is a quotation mark
+      		  minuteString = minuteString.substring(1); //take off final quotation mark
+    		  minuteString = minuteString.substring(0, minuteString.length()-1);//takes off the first character which is a quotation mark
+      		  i.add(new Label("Time of Sunset: " + hourString + ":" + minuteString)); //TO VIEW 
       		  i.setWidth("6cm"); //set the width of the vertical panel to fit in the stacklayout (in the gui)
         }
              
           });
+          
+  		  i.add(new Image("img/wunderground.jpg")); //add the image to credit wunderground for this information 
 		return i;
 }
 }               
