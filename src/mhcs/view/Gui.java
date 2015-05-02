@@ -635,7 +635,7 @@ public class Gui implements EntryPoint{
         g_details.setWidget(0, 0, left);
         
 		long diff = endDate.getTime() - currentDate.getTime();
-        boolean recalibrate = isRecalibrate();
+        boolean recalibrate = isRecalibrate(diff);
         if (recalibrate) {
         	diff = 0;
         }
@@ -662,9 +662,8 @@ public class Gui implements EntryPoint{
 	 * @param none
 	 * @return A boolean to say if recalibration is needed
 	 */
-	public boolean isRecalibrate() {
+	public boolean isRecalibrate(long diff) {
 		boolean recalibrate = false;
-		long diff = endDate.getTime() - currentDate.getTime();
         if (diff <= 0) {
         	Window.alert("Need to recalibrate");
         	recalibrate = true;

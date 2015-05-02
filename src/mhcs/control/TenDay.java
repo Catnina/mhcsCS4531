@@ -75,8 +75,8 @@ public class TenDay {
 		Storage moduleStore = Storage.getLocalStorageIfSupported();
 		Date currentDate = new Date();
 		Date end = new Date();
-		int endDate = currentDate.getDate() + 10;
-		end.setDate(endDate);
+		int endDate = currentDate.getMinutes() + 2;
+		end.setMinutes(endDate);
 		
 		int end_MONTH_I = end.getMonth();
 		int end_DAY_I = end.getDate();
