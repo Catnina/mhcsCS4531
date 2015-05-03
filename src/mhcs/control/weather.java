@@ -7,6 +7,8 @@ package mhcs.control;
  *
  */
 
+import java.util.Date;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder; 
@@ -94,11 +96,21 @@ public class weather{
       		  minuteString = minuteString.substring(1); //take off final quotation mark
     		  minuteString = minuteString.substring(0, minuteString.length()-1);//takes off the first character which is a quotation mark
       		  i.add(new Label("Time of Sunset: " + hourString + ":" + minuteString)); //TO VIEW 
+      		  
+              Date currentDate = new Date();
+              Integer hours = Integer.parseInt(hourString)-(Integer)(currentDate.getHours());
+              Integer minutes = Integer.parseInt(minuteString)-(Integer)(currentDate.getMinutes());
+              if (minutes < 0){
+            	  hours = hours-1;
+            	  minutes = 60 + minutes;
+              }
+              i.add(new Label("Time Until Sunset: " + hours.toString() + " hours and " + minutes.toString() + " minutes."));
+      		  
       		  i.setWidth("6cm"); //set the width of the vertical panel to fit in the stacklayout (in the gui)
         }
              
           });
-          
+                    
   		  i.add(new Image("img/wunderground.jpg")); //add the image to credit wunderground for this information 
 		return i;
 }

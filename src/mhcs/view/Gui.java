@@ -124,12 +124,14 @@ public class Gui implements EntryPoint{
 		    	String s = ptb.getText();
 		    	String userName = utb.getText();
 		    	if (s.equals("mhcs") && userName.equals("Catania")) {
-		        Sound intro = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"/sounds/intro.mp3");
-		        intro.play();
+		        Sound correct = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"/sounds/correct.mp3");
+		        correct.play();
 			    	login.hide();
 		    	}
 		    	else {
 		    		tb.setText("Incorrect Username or Password");
+		    		Sound incorrect = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"/sounds/incorrect.mp3");
+			        incorrect.play();
 		    		utb.setText("");
 		    		ptb.setText("");
 		    		}
@@ -186,6 +188,8 @@ public class Gui implements EntryPoint{
            //*******************************************
            Button logoutButton= new Button("Log Out", new ClickHandler() {
                public void onClick(ClickEvent event) {
+            	Sound logout = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"/sounds/logout.mp3");
+   		        logout.play();
                	saveModules();
                 loginPage();
   		      } // this button removes all the data from the page and sends the system back to the login page. 
@@ -417,8 +421,8 @@ public class Gui implements EntryPoint{
 			        pPanel.hide();
 			        modMap.renderMap(moduleList);
 			        saveModules();
-	    	  		Sound intro = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"/sounds/beep.mp3");
-			        intro.play();
+	    	  		Sound added = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"/sounds/added.mp3");
+			        added.play();
 			        if (new counters(moduleList).minConfigPossible()){
 						configPoss.setText("minimum configuration NOT possible");
 					}
@@ -433,6 +437,8 @@ public class Gui implements EntryPoint{
           	  		  //if it's not sucessful, hid the popup panel, make a new popup that tells the user that they were unable
           	  		  //to add the module; show THIS popup panel. 
         	          pPanel.hide();
+        	          Sound unableToAdd = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"/sounds/unable.mp3");
+      		          unableToAdd.play();
 		      		  final PopupPanel tempPP = new PopupPanel();
 		      		  tempPP.setSize("5cm", "3cm");
 		      		  VerticalPanel vPanelTemp = new VerticalPanel();
