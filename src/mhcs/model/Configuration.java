@@ -51,6 +51,22 @@ public class Configuration {
 		return modList.getModules();
 	}
 	
+	/**
+	 * Gets a module list for easy use in module map
+	 * @return ModuleList of the configuration
+	 */
+	public ModuleList getConfigModList() {
+		ModuleList modList = new ModuleList();
+		ModuleMaker maker = new ModuleMaker(modList);
+		for(TemplateBlock block: list) {
+			Module module = block.getContainedModule();
+			maker.createModule(module.getIdNumber(), ( absoluteX + block.getXOffset() ), ( absoluteY + block.getYOffset() ), 0, "Usable");
+		}
+		
+		return modList;
+		
+	}
+	
 	public Integer getQuality() {
 		return quality;
 	}
