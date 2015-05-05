@@ -35,6 +35,8 @@ public class ModuleMaker {
 			} else {
 				result = false;
 			}
+		} else {
+			result = false;
 		}
 		
 		return result;
