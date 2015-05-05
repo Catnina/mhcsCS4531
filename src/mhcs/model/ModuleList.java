@@ -43,6 +43,10 @@ public class ModuleList {
 		moduleTable.remove(idNum);
 	}
 	
+	public void clearList() {
+		moduleTable.clear();
+	}
+	
 	//General Methods
 	public Module getModuleByIdNumber(Integer idNum) {
 		Module result;

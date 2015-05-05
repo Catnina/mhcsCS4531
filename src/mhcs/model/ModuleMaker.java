@@ -17,11 +17,7 @@ public class ModuleMaker {
 	public ModuleMaker(ModuleList givenList)
 	{
 		list = givenList;
-		for(Integer i = 0; i < X_SIZE; ++i) {
-			for(Integer j = 0; j < Y_SIZE; ++j) {
-				clear[i][j] = true;
-			}
-		}
+		reset();
 	}
 	
 	//General Methods
@@ -29,7 +25,7 @@ public class ModuleMaker {
 		int id = idNumber.intValue();
 		boolean result = true;
 		Module newModule = null;
-		if(clear[xCoordinate][yCoordinate]) {
+		if(clear[xCoordinate-1][yCoordinate-1]) {
 			if(id >= 1 && id <= 40) {
 				newModule = new PlainModule(xCoordinate, yCoordinate, idNumber, turnsToUpright, condition);
 				list.addModule(newModule);
@@ -47,8 +43,21 @@ public class ModuleMaker {
 	
 	public boolean editModule(Integer oldId, Integer idNumber, Integer xCoordinate, Integer yCoordinate, Integer turnsToUpright, String condition) {
 		Module target = list.getModuleByIdNumber(oldId);
-		clear[target.getXCoordinate()][target.getYCoordinate()] = true;
+		clear[target.getXCoordinate()-1][target.getYCoordinate()-1] = true;
 		list.removeModule(target);
 		return createModule(idNumber, xCoordinate, yCoordinate, turnsToUpright, condition);
+	}
+	
+	public void clear() {
+		list.clearList();
+		reset();
+	}
+	
+	private void reset() {
+		for(Integer i = 0; i < X_SIZE; ++i) {
+			for(Integer j = 0; j < Y_SIZE; ++j) {
+				clear[i][j] = true;
+			}
+		}
 	}
 }
