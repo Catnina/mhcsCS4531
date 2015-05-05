@@ -14,6 +14,17 @@ import mhcs.model.Configuration;
 public class ConfigurationBuilder {
 	private ModuleList modList;
 	
+	private Integer PLAIN = 2;
+	private Integer DORMITORY = 2;
+	private Integer SANITATION = 4;
+	private Integer FOOD = 2;
+	private Integer GYM = 2;
+	private Integer CANTEEN = 10;
+	private Integer POWER = 7;
+	private Integer CONTROL = 7;
+	private Integer AIRLOCK = 20;
+	private Integer MEDICAL = 10;
+	
 	public ConfigurationBuilder(ModuleList list) {
 		modList = list;
 	}
@@ -27,7 +38,7 @@ public class ConfigurationBuilder {
 		
 		template = fleshCross(templateQueue);
 		
-		config = new Configuration( averageX(), averageY(), template);
+		config = new Configuration( averageX(), averageY(), template, qualityCalculator(36));
 		
 		return config;
 	}
@@ -41,7 +52,7 @@ public class ConfigurationBuilder {
 		
 		template = fleshCup(templateQueue);
 		
-		config = new Configuration( averageX(), averageY(), template);
+		config = new Configuration( averageX(), averageY(), template, qualityCalculator(34));
 		
 		return config;
 	}
@@ -70,6 +81,86 @@ public class ConfigurationBuilder {
 		return built;
 	}
 
+	private Integer qualityCalculator(Integer minConfigNum) { // Minimun Configuration Number - the number of modules required to provide a full configuration
+		Integer quality = 100;
+		Integer count = 0;
+		
+		// plain modules
+		for(Integer i = 1; i <= 40; ++i) {
+			if(modList.containsId(i)) {
+				++count;
+			}
+		}
+		if( count.intValue() < minConfigNum.intValue() ) {
+			quality -= PLAIN * (minConfigNum - count);
+		}
+		
+		// dormitory modules
+		for(Integer i = 61; i <= 80; ++i) {
+			if(!modList.containsId(i)) {
+				quality -= DORMITORY;
+			}
+		}
+		// sanitation modules
+		for(Integer i = 91; i <= 100; ++i) {
+			if(!modList.containsId(i)) {
+				quality -= SANITATION;
+			}
+		}
+		// food modules
+		for(Integer i = 111; i <= 120; ++i) {
+			if(!modList.containsId(i)) {
+				quality -= FOOD;
+			}
+		}
+		// gym modules
+		for(Integer i = 131; i <= 134; ++i) {
+			if(!modList.containsId(i)) {
+				quality -= GYM;
+			}
+		}
+		
+		// canteen modules
+		for(Integer i = 141; i <= 144; ++i) {
+			if(!modList.containsId(i)) {
+				quality -= CANTEEN;
+			}
+		}
+		
+		// power modules
+		for(Integer i = 151; i <= 154; ++i) {
+			if(!modList.containsId(i)) {
+				quality -= POWER;
+			}
+		}
+		
+		// control modules
+		for(Integer i = 161; i <= 164; ++i) {
+			if(!modList.containsId(i)) {
+				quality -= CONTROL;
+			}
+		}
+		
+		// airlock modules
+		for(Integer i = 171; i <= 174; ++i) {
+			if(!modList.containsId(i)) {
+				quality -= AIRLOCK;
+			}
+		}
+		// medical modules
+		for(Integer i = 181; i <= 184; ++i) {
+			if(!modList.containsId(i)) {
+				quality -= MEDICAL;
+			}
+		}
+		
+		if( quality.intValue() < 0) {
+			quality = 0;
+		}
+		
+		return quality;
+	}
+	
 	private ArrayList<TemplateBlock> fleshCup(PriorityQueue<TemplateBlock> templateQueue) {
 		ArrayList<TemplateBlock> template = new ArrayList<TemplateBlock>();
 		ArrayList<Module> used = new ArrayList<Module>();
@@ -470,7 +561,6 @@ public class ConfigurationBuilder {
 		
 		return template;
 	}
-	
 	private ArrayList<TemplateBlock> fleshCross(PriorityQueue<TemplateBlock> templateQueue) {
 		ArrayList<TemplateBlock> template = new ArrayList<TemplateBlock>();
 		ArrayList<Module> used = new ArrayList<Module>();
@@ -1048,6 +1138,7 @@ public class ConfigurationBuilder {
 		
 		return (sum / count);
 	}
+	
 	private PriorityQueue<TemplateBlock> buildCrossTemplate() {
 		PriorityQueue<TemplateBlock> templateQueue = new PriorityQueue<TemplateBlock>();
 		String plain = "Plain";

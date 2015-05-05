@@ -11,11 +11,13 @@ public class Configuration {
 	private Integer absoluteX;
 	private Integer absoluteY;
 	private ArrayList<TemplateBlock> list;
+	private Integer quality;
 	
-	public Configuration(Integer x, Integer y, ArrayList<TemplateBlock> key) {
+	public Configuration(Integer x, Integer y, ArrayList<TemplateBlock> key, Integer configurationQuality) {
 		absoluteX = x;
 		absoluteY = y;
 		list = key;
+		quality = configurationQuality;
 	}
 	
 	public Integer getX() {
@@ -47,6 +49,13 @@ public class Configuration {
 		}
 		
 		return modList.getModules();
+	}
+	
+	public Integer getQuality() {
+		return quality;
+	}
+	protected void setQuality(Integer newQuality) {
+		quality = newQuality;
 	}
 	
 	public String toString() {

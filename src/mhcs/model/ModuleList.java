@@ -49,6 +49,9 @@ public class ModuleList {
 		result = moduleTable.get(idNum);
 		return result;
 	}
+	public void removeModuleByIdNumber(Integer idNum) {
+		moduleTable.remove(idNum);
+	}
 	
 	public boolean containsId(Integer idNum) {
 		return moduleTable.containsKey(idNum);
