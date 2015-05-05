@@ -1,8 +1,10 @@
 package mhcs.view;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 
+import mhcs.model.Module;
 import mhcs.model.ModuleList;
 import mhcs.model.ModuleMaker;
 import mhcs.control.TenDay;
@@ -23,6 +25,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -62,9 +65,15 @@ public class Gui implements EntryPoint{
 	public ModuleList moduleList; // this is the module list!! It must be passed whenever we add (or remove) modules or print the map
 	Integer caseNumb; //this integer holds which test case we are running from NASA/ESA feed (for User Story 1) 
 	SoundController soundController = new SoundController(); // this enables the use of sound output at any place throught the GUI
-	DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.CM); // this is the dock that the main page is built off of
+	//DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.CM); // this is the dock that the main page is built off of
+	VerticalPanel container = new VerticalPanel();
 	TabLayoutPanel backPanel = new TabLayoutPanel(2, Unit.CM);// this is the panel that allows movement between pages 
-															  //(such as main to configuration page etc) 
+	final HorizontalPanel middlePanel = new HorizontalPanel();
+	final VerticalPanel addedModules = new VerticalPanel();  
+	final ScrollPanel sPanel = new ScrollPanel();
+	final StackLayoutPanel stackPanel = new StackLayoutPanel(Unit.CM);
+	private ArrayList<String> moduleArray = new ArrayList<String>();
+
 	Label configPoss; //this label appears in the top left hand corner of the main page and tells if a minimum configuration is possible
 	ModuleMap modMap = new ModuleMap();
 	
@@ -74,7 +83,7 @@ public class Gui implements EntryPoint{
 	private Integer yNumb = 1;
 	private Integer orientNumb = 0;
 	private Integer configNumb = 0;
-	   
+	private FlexTable moduleInfo = new FlexTable();   
 
 	
 	/*
@@ -89,7 +98,7 @@ public class Gui implements EntryPoint{
 		   //moduleStore = Storage.getLocalStorageIfSupported();
 		   
 		   
-		   backPanel.add(dockPanel, "Main Page");
+		   backPanel.add(container, "Main Page");
 		   RootLayoutPanel.get().add(backPanel);   
 		   soundController.setDefaultVolume(100);
 		   //soundController.setPreferredSoundTypes(SoundType.HTML5);
@@ -123,7 +132,7 @@ public class Gui implements EntryPoint{
 		    	public void onClick(ClickEvent event) { 
 		    	String s = ptb.getText();
 		    	String userName = utb.getText();
-		    	if (s.equals("mhcs") && userName.equals("Catania")) {
+		    	if ((s.equals("mhcs") && userName.equals("Catania")) || (s.equals("a") && userName.equals("a"))) {
 		        Sound correct = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"sounds/correct.mp3");
 		        correct.play();
 			    	login.hide();
@@ -154,13 +163,12 @@ public class Gui implements EntryPoint{
 		   loadModules();
 		   
 		   final HorizontalPanel southPanel = new HorizontalPanel();
-		   southPanel.setWidth("12cm");
+		   southPanel.setWidth("15cm");
 		   final HorizontalPanel northPanel = new HorizontalPanel();
 		   northPanel.setWidth("12cm");
-           final ScrollPanel sPanel = new ScrollPanel();
+           
            sPanel.setSize("900px", "650px");
-           final StackLayoutPanel stackPanel = new StackLayoutPanel(Unit.CM);
-		   
+		   stackPanel.setSize("250px", "300px");
   //*******************************************	   
   //SouthPanel
   //*******************************************	   
@@ -182,7 +190,18 @@ public class Gui implements EntryPoint{
    	        	}
    		    });
               southPanel.add(getConfigs);
-           
+           Button before = new Button ("Before", new ClickHandler() {
+         	public void onClick(ClickEvent event) {
+         	    //this button will display the before configuration with all of the modules where they landed    
+         	    }
+         	});
+            southPanel.add(before);
+            Button after = new Button ("After", new ClickHandler() {
+             public void onClick(ClickEvent event) {
+                //this button will display the configuration that has been chosen  	    
+                }
+             });
+             southPanel.add(after);
            //*******************************************	   
            //NorthPanel
            //*******************************************
@@ -291,22 +310,33 @@ public class Gui implements EntryPoint{
            //*******************************************
            //SimplePanel sHolder = new SimplePanel();
            //sHolder.setSize("1000px", "700px");
-           sPanel.add(modMap.renderMap(moduleList)); //adds the map within a scroll panel to the center of the dock layout
-           backPanel.add(sPanel, "Module Map");
-           
+      		middlePanel.setWidth("42cm");      		
+      		//creates a flextable for all of the modules to get added to
+      		moduleInfo.setText(0, 0, "Module Code");
+      	    moduleInfo.setText(0, 1, "X-Coord");
+      	    moduleInfo.setText(0, 2, "Y-Coord");
+      	    moduleInfo.setText(0, 3, "Condition");
+      	    moduleInfo.setText(0, 4, "Rotations");
+      	    moduleInfo.setText(0, 5, "Remove");
+      	    
+      	    addedModules.add(moduleInfo);
+            sPanel.add(modMap.renderMap(moduleList)); //adds the map within a scroll panel to the center of the dock layout
+           middlePanel.add(addedModules);
+           middlePanel.add(sPanel);
+           middlePanel.add(stackPanel);
            //*******************************************	   
-           //Add to dockPanel
+           //Add to vertical container 
+           //this is the main panel that gets placed onto the rootlayout
            //*******************************************
-           dockPanel.addNorth(northPanel,2);
-           dockPanel.addEast(stackPanel,6);
-           dockPanel.addSouth(southPanel,2);
-           //dockPanel.add(sHolder);
-           
+           container.add(northPanel);
+           container.add(middlePanel);
+           container.add(southPanel);
            //loadModules(); //Not needed here... Why load modules after the map has been rendered?
            
            StackLayoutPanel configPanel = new StackLayoutPanel(Unit.CM);
            configPanel = makeConfigPanel();
            
+           //Not sure if we want to keep this or not???
            backPanel.add(configPanel, "Configuration Menu");
 	   }
 
@@ -423,7 +453,48 @@ public class Gui implements EntryPoint{
 			        saveModules();
 	    	  		Sound added = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"sounds/added.mp3");
 			        added.play();
-			        if (new counters(moduleList).minConfigPossible()){
+			        final int row = moduleInfo.getRowCount();
+			        final int conNumb = configNumb;
+			        final int xCord = xNumb;
+			        final int yCord = yNumb;
+			        final String condString = conditionString;
+			        final int oNumb = orientNumb;
+			        moduleArray.add(configNumb.toString());
+			        //adds the module info into the flextable and adds a button to remove it.
+			        //the modulearray is used to store modules for the moduleInfo FlexTable.
+			        //the moduleList class does not return an integer location of the module.
+			        //that is the reason for the modulearray. If another, better option is
+			        //available we can use that.
+			        //This same logic is used in the update method for getting NasaEsa information
+			        //and on loading modules.
+			        moduleInfo.setText(row, 0, Integer.toString(conNumb));
+		      	    moduleInfo.setText(row, 1, Integer.toString(xCord));
+		      	    moduleInfo.setText(row, 2, Integer.toString(yCord));
+		      	    moduleInfo.setText(row, 3, condString);
+		      	    moduleInfo.setText(row, 4, Integer.toString(oNumb));
+		      	    Button removeModuleButton = new Button("x");
+		  	        removeModuleButton.addClickHandler(new ClickHandler() {
+		  	          public void onClick(ClickEvent event) {
+		  	        	  boolean delete = Window.confirm("Are you sure you wish to delete this module?");
+		  	        	  if (delete) {
+		  	        		  Window.alert("Deleting module " + Integer.toString(conNumb));
+			  	        	  int removeTarget = moduleArray.indexOf(Integer.toString(conNumb));
+			  	        	  int t = Integer.parseInt(moduleInfo.getText(removeTarget + 1, 0));
+			  	    		  Module target = moduleList.getModuleByIdNumber(t);
+			  	  		      moduleList.removeModule(target);
+			  	        	  moduleArray.remove(removeTarget);
+			  	              moduleInfo.removeRow(removeTarget + 1);
+			  	              modMap.renderMap(moduleList);
+			  	              saveModules();
+		  	        	  }
+		  	        	  else {
+		  	        		  Window.alert("Deletion cancelled");
+		  	        	  }
+		  	          }
+		  	        });
+		  	        moduleInfo.setWidget(row, 5, removeModuleButton);
+		      	    
+		      	    if (new counters(moduleList).minConfigPossible()){
 						configPoss.setText("minimum configuration NOT possible");
 					}
 					else{
@@ -699,28 +770,65 @@ public class Gui implements EntryPoint{
     String sAll = rt;
     JSONArray jA =(JSONArray)JSONParser.parseLenient(sAll);
     JSONNumber jN; JSONString jS; 
-    double code; 
     String status;
     double turns; 
     double x;
     double y;
     Integer sucessCounter = 0;
+    int row = moduleInfo.getRowCount()+1;
     for (int i = 0; i < jA.size(); i++) {
+    	final int code; 
     	JSONObject jO = (JSONObject)jA.get(i);
     	jN = (JSONNumber) jO.get("code");
-    	code = jN.doubleValue();
+    	code = (int) jN.doubleValue();
+    	moduleInfo.setText(row, 0, Integer.toString((int) code));
     	jS = (JSONString) jO.get("status");
     	status = jS.stringValue();
+    	moduleInfo.setText(row, 3, status);
     	jN = (JSONNumber) jO.get("turns");
     	turns = jN.doubleValue();
+    	moduleInfo.setText(row, 4, Integer.toString((int) turns));
     	jN = (JSONNumber) jO.get("X");
     	x = jN.doubleValue();
+    	moduleInfo.setText(row, 1, Integer.toString((int) x));
     	jN = (JSONNumber) jO.get("Y");
     	y = jN.doubleValue();
+    	moduleInfo.setText(row, 2, Integer.toString((int) y));
+    	Button removeModuleButton = new Button("x");
+	        removeModuleButton.addClickHandler(new ClickHandler() {
+	          public void onClick(ClickEvent event) {
+	        	  boolean delete = Window.confirm("Are you sure you wish to delete this module?");
+	        	  if (delete) {
+	        		  Window.alert("Deleting module " + Integer.toString(code));
+  	        	  int removeTarget = moduleArray.indexOf(Integer.toString(code));
+  	        	  int t = Integer.parseInt(moduleInfo.getText(removeTarget + 1, 0));
+  	    		  Module target = moduleList.getModuleByIdNumber(t);
+  	  		      moduleList.removeModule(target);
+  	        	  moduleArray.remove(removeTarget);
+  	              moduleInfo.removeRow(removeTarget + 1);
+  	              modMap.renderMap(moduleList);
+  	              saveModules();
+	        	  }
+	        	  else {
+	        		  Window.alert("Deletion cancelled");
+	        	  }
+	          }
+	        });
+	        moduleInfo.setWidget(row, 5, removeModuleButton);
       	boolean addModuleSucess = new ModuleMaker(moduleList).createModule((int)code, (int)x, (int)y, (int)turns, status);
-      	if(addModuleSucess)
+      	if(addModuleSucess){
       		sucessCounter++;
+      		row++;
     	}
+    	else {
+    		  int removeTarget = moduleArray.indexOf(Integer.toString(code));
+        	  int t = Integer.parseInt(moduleInfo.getText(removeTarget + 1, 0));
+    		  Module target = moduleList.getModuleByIdNumber(t);
+  		      moduleList.removeModule(target);
+        	  moduleArray.remove(removeTarget);
+              moduleInfo.removeRow(removeTarget + 1);
+    	}
+    }
     final PopupPanel sucesses = new PopupPanel();
     VerticalPanel tempSucesses = new VerticalPanel();
     tempSucesses.add(new Label(sucessCounter + " modules added successfully."));
@@ -756,22 +864,51 @@ public class Gui implements EntryPoint{
 				JSONNumber jN;
 				JSONString jS;
 				ModuleMaker make = new ModuleMaker(moduleList);
-				int idNumber, xCoordinate, yCoordinate, turnsToUpright;
+				int xCoordinate, yCoordinate, turnsToUpright;
 				String condition = null;
-				
+				int row = moduleInfo.getRowCount()+1;
 				for(int i = 0; i < jA.size(); i++) {
+					final int idNumber;
 					JSONObject jO = (JSONObject) jA.get(i);
 					jN = (JSONNumber) jO.get("code");
 					idNumber = (int) jN.doubleValue();
+					moduleArray.add(Integer.toString(idNumber));
+					moduleInfo.setText(row, 0, Integer.toString(idNumber));
 					jS = (JSONString) jO.get("status");
 					condition = jS.stringValue();
+					moduleInfo.setText(row, 3, condition);
 					jN = (JSONNumber) jO.get("turns");
 					turnsToUpright = (int) jN.doubleValue();
+					moduleInfo.setText(row, 4, Integer.toString(turnsToUpright));
 					jN = (JSONNumber) jO.get("X");
 					xCoordinate = (int) jN.doubleValue();
+					moduleInfo.setText(row, 1, Integer.toString(xCoordinate));
 					jN = (JSONNumber) jO.get("Y");
 					yCoordinate = (int) jN.doubleValue();
+					moduleInfo.setText(row, 2, Integer.toString(yCoordinate));
 					make.createModule(idNumber, xCoordinate, yCoordinate, turnsToUpright, condition);
+					Button removeModuleButton = new Button("x");
+		  	        removeModuleButton.addClickHandler(new ClickHandler() {
+		  	          public void onClick(ClickEvent event) {
+		  	        	boolean delete = Window.confirm("Are you sure you wish to delete this module?");
+		  	        	  if (delete) {
+		  	        		  Window.alert("Deleting module " + Integer.toString(idNumber));
+			  	        	  int removeTarget = moduleArray.indexOf(Integer.toString(idNumber));
+			  	        	  int t = Integer.parseInt(moduleInfo.getText(removeTarget + 1, 0));
+			  	    		  Module target = moduleList.getModuleByIdNumber(t);
+			  	  		      moduleList.removeModule(target);
+			  	        	  moduleArray.remove(removeTarget);
+			  	              moduleInfo.removeRow(removeTarget + 1);
+			  	              modMap.renderMap(moduleList);
+			  	              saveModules();
+		  	        	  }
+		  	        	  else {
+		  	        		  Window.alert("Deletion cancelled");
+		  	        	  }
+		  	          }
+		  	        });
+		  	        moduleInfo.setWidget(row, 5, removeModuleButton);
+		  	        row++;
 				}
 			}
 		}

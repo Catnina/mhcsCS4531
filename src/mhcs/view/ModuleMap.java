@@ -41,7 +41,7 @@ public class ModuleMap {
 		Collection<Module> modList = list.getModules();
 		Module mod = null;
 		//int modId;
-		
+		map.clear();
 		for(Module iterator : modList) {
 			mod = iterator;
 			ModuleImage img = new ModuleImage(mod);
