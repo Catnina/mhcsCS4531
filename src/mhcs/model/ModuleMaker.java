@@ -50,6 +50,12 @@ public class ModuleMaker {
 		return createModule(idNumber, xCoordinate, yCoordinate, turnsToUpright, condition);
 	}
 	
+	public void removeModule(Integer idNum) {
+		Module target = list.getModuleByIdNumber(idNum);
+		clear[target.getXCoordinate()-1][target.getYCoordinate()-1] = true;
+		list.removeModule(target);
+	}
+	
 	public void clear() {
 		list.clearList();
 		reset();
