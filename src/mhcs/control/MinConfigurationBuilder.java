@@ -78,8 +78,21 @@ public class MinConfigurationBuilder {
 				sanitation.setContainedModule(temp);
 				key.add(sanitation);
 			}
-			
-			returnConfig = new Configuration(averageX(), averageY(), key, 66);
+			Integer tempX = averageX();
+			Integer tempY = averageX();
+			if(tempX < 4){
+				tempX = tempX+4;
+			}
+			if(tempX > 96){
+				tempX = tempX-4;
+			}
+			if(tempY > 46){
+				tempX = tempX-4;
+			}
+			if(tempY < 4){
+				tempX = tempX+4;
+			}
+			returnConfig = new Configuration(tempX, tempY, key, 66);
 		}
 		return returnConfig;
 	}
@@ -148,7 +161,21 @@ public class MinConfigurationBuilder {
 				key.add(sanitation);
 			}
 			
-			returnConfig = new Configuration(averageX(), averageY(), key, 78);
+			Integer tempX = averageX();
+			Integer tempY = averageX();
+			if(tempX < 4){
+				tempX = tempX+4;
+			}
+			if(tempX > 96){
+				tempX = tempX-4;
+			}
+			if(tempY > 46){
+				tempX = tempX-4;
+			}
+			if(tempY < 4){
+				tempX = tempX+4;
+			}
+			returnConfig = new Configuration(tempX, tempY, key, 78);
 		}
 		return returnConfig;
 	}
