@@ -4,9 +4,12 @@ package mhcs.view;
 import java.util.ArrayList;
 import java.util.Date;
 
+import mhcs.model.Configuration;
 import mhcs.model.Module;
 import mhcs.model.ModuleList;
 import mhcs.model.ModuleMaker;
+import mhcs.control.ConfigurationBuilder;
+import mhcs.control.MinConfigurationBuilder;
 import mhcs.control.TenDay;
 import mhcs.control.counters;
 import mhcs.control.weather;
@@ -78,6 +81,8 @@ public class Gui implements EntryPoint{
 	private final ScrollPanel sPanel = new ScrollPanel();
 	private final StackLayoutPanel stackPanel = new StackLayoutPanel(Unit.CM);
 	private ArrayList<String> moduleArray = new ArrayList<String>();
+	private Integer choice = 0;
+
 
 	private int counter = 0;
 	private Label configPoss; //this label appears in the top left hand corner of the main page and tells if a minimum configuration is possible
@@ -642,7 +647,12 @@ public class Gui implements EntryPoint{
 		pPanel.setAutoHideEnabled(true);
 		DockLayoutPanel layoutPPanel = new DockLayoutPanel(Unit.CM);
 		VerticalPanel verticalChoicePanel = new VerticalPanel();
-		ListBox chooseConfig = new ListBox();
+		final ListBox chooseConfig = new ListBox();
+		chooseConfig.addChangeHandler(new ChangeHandler() {
+		public void onChange(ChangeEvent event) {
+			choice = chooseConfig.getSelectedIndex();
+			}
+        });
 		chooseConfig.addItem("Minimum 1");
 		chooseConfig.addItem("Minimum 2");
 		chooseConfig.addItem("Full 1");
@@ -650,10 +660,36 @@ public class Gui implements EntryPoint{
 		verticalChoicePanel.add(chooseConfig);
 		Button chooseButton = new Button("Choose", new ClickHandler(){
 			  public void onClick(ClickEvent event){
+					
+					//make configurations
+					Configuration config;
+					ConfigurationBuilder cBuild = new ConfigurationBuilder(moduleList);
+					MinConfigurationBuilder mcBuild = new MinConfigurationBuilder(moduleList);
+
+					//
+					if(choice == 0){
+						config = mcBuild.buildMinConfigOne();
+						configList = config.getConfigModList();
+					}
+					else if(choice == 1){
+						//min2
+					}
+					else if(choice == 2){
+						//full 1
+					}
+					else{
+						//full 2
+					}
+					
+					saveConfig();
+					modMap.renderMap(configList);
+					
 					pPanel.hide();
+
 					final PopupPanel tempPP = new PopupPanel();
 					VerticalPanel vPanelTemp = new VerticalPanel();
-				    vPanelTemp.add(new Label("making configuations"));
+				    vPanelTemp.add(new Label("Configuraiton Made."));
+				    vPanelTemp.add(new Label("Click on 'View Configuation Map' to view."));
 			      	Button tempButton = new Button("OK", new ClickHandler(){
 			      	public void onClick(ClickEvent event){
 			      		 tempPP.hide();

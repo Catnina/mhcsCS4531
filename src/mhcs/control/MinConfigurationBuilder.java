@@ -79,7 +79,7 @@ public class MinConfigurationBuilder {
 				key.add(sanitation);
 			}
 			
-			returnConfig = new Configuration(averageX(), averageY(), key);
+			returnConfig = new Configuration(averageX(), averageY(), key, 66);
 		}
 		return returnConfig;
 	}
@@ -148,7 +148,7 @@ public class MinConfigurationBuilder {
 				key.add(sanitation);
 			}
 			
-			returnConfig = new Configuration(averageX(), averageY(), key);
+			returnConfig = new Configuration(averageX(), averageY(), key, 78);
 		}
 		return returnConfig;
 	}
