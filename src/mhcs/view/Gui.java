@@ -65,24 +65,24 @@ public class Gui implements EntryPoint{
 	 */
 	
 	private Storage moduleStore;
-	Date endDate, currentDate;
+	private Date endDate, currentDate;
 	private ModuleList moduleList; // this is the module list!! It must be passed whenever we add (or remove) modules or print the map
 	private ModuleList configList; // configurations list
 	
-	Integer caseNumb; //this integer holds which test case we are running from NASA/ESA feed (for User Story 1) 
-	SoundController soundController = new SoundController(); // this enables the use of sound output at any place throught the GUI
-	//DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.CM); // this is the dock that the main page is built off of
-	VerticalPanel container = new VerticalPanel();
-	TabLayoutPanel backPanel = new TabLayoutPanel(2, Unit.CM);// this is the panel that allows movement between pages 
-	final HorizontalPanel middlePanel = new HorizontalPanel();
-	final VerticalPanel addedModules = new VerticalPanel();  
-	final ScrollPanel sPanel = new ScrollPanel();
-	final StackLayoutPanel stackPanel = new StackLayoutPanel(Unit.CM);
+	private Integer caseNumb; //this integer holds which test case we are running from NASA/ESA feed (for User Story 1) 
+	private SoundController soundController = new SoundController(); // this enables the use of sound output at any place throught the GUI
+	private VerticalPanel container = new VerticalPanel();
+	private TabLayoutPanel backPanel = new TabLayoutPanel(2, Unit.CM);// this is the panel that allows movement between pages 
+	private final HorizontalPanel middlePanel = new HorizontalPanel();
+	private final VerticalPanel addedModules = new VerticalPanel();  
+	private final ScrollPanel sPanel = new ScrollPanel();
+	private final StackLayoutPanel stackPanel = new StackLayoutPanel(Unit.CM);
 	private ArrayList<String> moduleArray = new ArrayList<String>();
 
-	Label configPoss; //this label appears in the top left hand corner of the main page and tells if a minimum configuration is possible
-	ModuleMap modMap = new ModuleMap();
-	
+	private int counter = 0;
+	private Label configPoss; //this label appears in the top left hand corner of the main page and tells if a minimum configuration is possible
+	private ModuleMap modMap = new ModuleMap();
+	private Button getConfigs, before, after;
 	//these are the add button listener values (become the value in the add fields) they are set to their inital states. 
 	private String conditionString = "Usable"; 
 	private Integer xNumb = 1;
@@ -102,9 +102,6 @@ public class Gui implements EntryPoint{
 		   caseNumb = 1;
 		   moduleList = new ModuleList();
 		   configList = new ModuleList();
-		   //moduleStore = Storage.getLocalStorageIfSupported();
-		   
-		   
 		   backPanel.add(container, "Main Page");
 		   RootLayoutPanel.get().add(backPanel);   
 		   soundController.setDefaultVolume(100);
@@ -175,40 +172,44 @@ public class Gui implements EntryPoint{
 		   northPanel.setWidth("12cm");
            
            sPanel.setSize("900px", "650px");
-		   stackPanel.setSize("250px", "300px");
+		   stackPanel.setSize("250px", "320px");
   //*******************************************	   
   //SouthPanel
   //*******************************************	   
 		   Button addModule= new Button("Add Module", new ClickHandler() {
             public void onClick(ClickEvent event) {
-            	addModuleMethod(); //caddModuleMehtod will set up the add module pop-up panel
+            	addModuleMethod(event); //caddModuleMehtod will set up the add module pop-up panel
             }
             });
 		   southPanel.add(addModule);
 		   Button removeModule = new Button ("Get Modules From NASA/ESA Feed", new ClickHandler() {
 	        public void onClick(ClickEvent event) {
-	        	getModulesFromNASAESAFeed(); //this method will get the data from NASA/ESA feed and return if it was sucessful
+	        	getModulesFromNASAESAFeed(event); //this method will get the data from NASA/ESA feed and return if it was sucessful
 		    }
 		    });
            southPanel.add(removeModule);
-           Button getConfigs = new Button ("Get Configurations", new ClickHandler() {
-   	        public void onClick(ClickEvent event) {
-   	        	getConfigurations();   	//this button will direct the user to get cofigurations pop=up panel where they can view 4 configuratiosn	    
-   	        	}
-   		    });
-              southPanel.add(getConfigs);
-           Button before = new Button ("Before", new ClickHandler() {
-         	public void onClick(ClickEvent event) {
-         	    //this button will display the before configuration with all of the modules where they landed    
-         	    }
-         	});
-            southPanel.add(before);
-            Button after = new Button ("After", new ClickHandler() {
-             public void onClick(ClickEvent event) {
-                //this button will display the configuration that has been chosen  	    
-                }
-             });
-             southPanel.add(after);
+           getConfigs = new Button ("Get Configurations", new ClickHandler() {
+      	        public void onClick(ClickEvent event) {
+      	        	getConfigurations();   	//this button will direct the user to get cofigurations pop=up panel where they can view 4 configuratiosn	    
+      	        	}
+      		    });
+              getConfigs.setEnabled(false);
+                 southPanel.add(getConfigs);
+              before = new Button ("Before", new ClickHandler() {
+            	public void onClick(ClickEvent event) {
+            			modMap.renderMap(moduleList);
+            	    }
+            	});
+              before.setEnabled(false);
+               southPanel.add(before);
+              after = new Button ("After", new ClickHandler() {
+                public void onClick(ClickEvent event) {
+               	 	modMap.renderMap(configList);  
+                   }
+                });
+               after.setEnabled(false);
+                southPanel.add(after);
+
            //*******************************************	   
            //NorthPanel
            //*******************************************
@@ -253,6 +254,7 @@ public class Gui implements EntryPoint{
 		    Recalibrate.addClickHandler(new ClickHandler() {
 		        public void onClick(ClickEvent event) {
 		        	//updates and gets the new 10 day
+		        	counter = 0;
 		        	TenDay.tenDayUpdate();
 		        	Date newTenDay = TenDay.getTenDay();
 		        	Date currentDate = new Date();
@@ -325,10 +327,13 @@ public class Gui implements EntryPoint{
       	    moduleInfo.setText(0, 3, "Condition");
       	    moduleInfo.setText(0, 4, "Rotations");
       	    moduleInfo.setText(0, 5, "Remove");
+      	   
+    	    ScrollPanel modInfoScrollPanel = new ScrollPanel();
+      	    modInfoScrollPanel.setSize("440px", "650px");
+      	    modInfoScrollPanel.add(moduleInfo);
       	    
-      	    addedModules.add(moduleInfo);
             sPanel.add(modMap.renderMap(moduleList)); //adds the map within a scroll panel to the center of the dock layout
-           middlePanel.add(addedModules);
+           middlePanel.add(modInfoScrollPanel);
            middlePanel.add(sPanel);
            middlePanel.add(stackPanel);
            //*******************************************	   
@@ -338,13 +343,11 @@ public class Gui implements EntryPoint{
            container.add(northPanel);
            container.add(middlePanel);
            container.add(southPanel);
-           //loadModules(); //Not needed here... Why load modules after the map has been rendered?
            
            StackLayoutPanel configPanel = new StackLayoutPanel(Unit.CM);
            configPanel = makeConfigPanel();
            
-           //Not sure if we want to keep this or not???
-           backPanel.add(configPanel, "Configuration Menu");
+           checkMinConfig();
 	   }
 
 	private StackLayoutPanel makeConfigPanel() {
@@ -375,7 +378,7 @@ public class Gui implements EntryPoint{
 	    * the createModule method (in module maker class) 
 	    * all fields are then added to the popuppanel and displayed. 
 	    */
-	private void addModuleMethod(){
+	private void addModuleMethod(ClickEvent event){
 		final PopupPanel pPanel = new PopupPanel();
 		pPanel.setGlassEnabled(true);
 		pPanel.setAutoHideEnabled(true);
@@ -442,6 +445,7 @@ public class Gui implements EntryPoint{
 		panel1.add(orientationSuggest);
 		panel1.add(addModuleButton);
 	    pPanel.add(panel1);
+	    pPanel.setPopupPosition(event.getClientX(), event.getClientY() - 200);
 	    pPanel.show();
 	    //*****************************
 	    //make button to add module
@@ -484,7 +488,6 @@ public class Gui implements EntryPoint{
 		  	          public void onClick(ClickEvent event) {
 		  	        	  boolean delete = Window.confirm("Are you sure you wish to delete this module?");
 		  	        	  if (delete) {
-		  	        		  Window.alert("Deleting module " + Integer.toString(conNumb));
 			  	        	  int removeTarget = moduleArray.indexOf(Integer.toString(conNumb));
 			  	        	  int t = Integer.parseInt(moduleInfo.getText(removeTarget + 1, 0));
 			  	    		  Module target = moduleList.getModuleByIdNumber(t);
@@ -493,6 +496,7 @@ public class Gui implements EntryPoint{
 			  	              moduleInfo.removeRow(removeTarget + 1);
 			  	              modMap.renderMap(moduleList);
 			  	              saveModules();
+			  	              checkMinConfig();
 		  	        	  }
 		  	        	  else {
 		  	        		  Window.alert("Deletion cancelled");
@@ -501,15 +505,7 @@ public class Gui implements EntryPoint{
 		  	        });
 		  	        moduleInfo.setWidget(row, 5, removeModuleButton);
 		      	    
-		      	    if (new counters(moduleList).minConfigPossible()){
-						configPoss.setText("minimum configuration NOT possible");
-					}
-					else{
-						configPoss.setText("minimum configuration possible!");
-					}
-			        
-		      		//updateLabel();
-			        
+		  	        checkMinConfig();
 	    	  	  }
           	  	  else{
           	  		  //if it's not sucessful, hid the popup panel, make a new popup that tells the user that they were unable
@@ -542,7 +538,7 @@ public class Gui implements EntryPoint{
 	 * get modules from NASA/ESA feed. Has the option of testCases 1-10 for the various test feeds. displays the listbox
 	 * and a button in the popup panel. the caseNumb holds the number of the testcase that is selected (initially 1)
 	 */
-	private void getModulesFromNASAESAFeed(){
+	private void getModulesFromNASAESAFeed(ClickEvent event){
 		final PopupPanel pPanel = new PopupPanel();
 		VerticalPanel vPanel = new VerticalPanel();
 		pPanel.setGlassEnabled(true);
@@ -603,6 +599,7 @@ public class Gui implements EntryPoint{
 	        	}
 	        });
 	    pPanel.add(vPanel);   
+	    pPanel.setPopupPosition(event.getClientX(), event.getClientY() - 200);
 	    pPanel.show();
 	}
 	
@@ -749,8 +746,13 @@ public class Gui implements EntryPoint{
 	public boolean isRecalibrate(long diff) {
 		boolean recalibrate = false;
         if (diff <= 0) {
-        	Window.alert("Need to recalibrate");
+        	counter ++;
         	recalibrate = true;
+        	stackPanel.animate(10);
+        	//this will make it so ten day alert does not keep bugging you
+        	//only alerts you once
+        	if (counter <= 1)
+        		Window.alert("Ten Day Alert needs to be recalibrated");
         }
 		return recalibrate;
 	}
@@ -806,15 +808,15 @@ public class Gui implements EntryPoint{
 	          public void onClick(ClickEvent event) {
 	        	  boolean delete = Window.confirm("Are you sure you wish to delete this module?");
 	        	  if (delete) {
-	        		  Window.alert("Deleting module " + Integer.toString(code));
-  	        	  int removeTarget = moduleArray.indexOf(Integer.toString(code));
-  	        	  int t = Integer.parseInt(moduleInfo.getText(removeTarget + 1, 0));
-  	    		  Module target = moduleList.getModuleByIdNumber(t);
-  	  		      moduleList.removeModule(target);
-  	        	  moduleArray.remove(removeTarget);
-  	              moduleInfo.removeRow(removeTarget + 1);
-  	              modMap.renderMap(moduleList);
-  	              saveModules();
+	  	        	  int removeTarget = moduleArray.indexOf(Integer.toString(code));
+	  	        	  int t = Integer.parseInt(moduleInfo.getText(removeTarget + 1, 0));
+	  	    		  Module target = moduleList.getModuleByIdNumber(t);
+	  	  		      moduleList.removeModule(target);
+	  	        	  moduleArray.remove(removeTarget);
+	  	              moduleInfo.removeRow(removeTarget + 1);
+	  	              modMap.renderMap(moduleList);
+	  	              saveModules();
+	  	              checkMinConfig();
 	        	  }
 	        	  else {
 	        		  Window.alert("Deletion cancelled");
@@ -846,6 +848,7 @@ public class Gui implements EntryPoint{
 	  });
     tempSucesses.add(tempButton);
     sucesses.add(tempSucesses);
+    checkMinConfig();
     sucesses.show();
     }
 	
@@ -943,7 +946,6 @@ public class Gui implements EntryPoint{
 		  	          public void onClick(ClickEvent event) {
 		  	        	boolean delete = Window.confirm("Are you sure you wish to delete this module?");
 		  	        	  if (delete) {
-		  	        		  Window.alert("Deleting module " + Integer.toString(idNumber));
 			  	        	  int removeTarget = moduleArray.indexOf(Integer.toString(idNumber));
 			  	        	  int t = Integer.parseInt(moduleInfo.getText(removeTarget + 1, 0));
 			  	    		  Module target = moduleList.getModuleByIdNumber(t);
@@ -951,6 +953,7 @@ public class Gui implements EntryPoint{
 			  	        	  moduleArray.remove(removeTarget);
 			  	              moduleInfo.removeRow(removeTarget + 1);
 			  	              modMap.renderMap(moduleList);
+			  	              checkMinConfig();
 			  	              saveModules();
 		  	        	  }
 		  	        	  else {
@@ -963,5 +966,17 @@ public class Gui implements EntryPoint{
 				}
 			}
 		}
+		
 	}
+	
+	private void checkMinConfig() {
+		if (new counters(moduleList).minConfigPossible()){
+			configPoss.setText("minimum configuration possible!");
+			getConfigs.setEnabled(true);
+		}
+		else{
+			configPoss.setText("minimum configuration NOT possible");
+			getConfigs.setEnabled(false);
+		}
+	}	
 }

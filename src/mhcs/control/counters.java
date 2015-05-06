@@ -1,6 +1,6 @@
 package mhcs.control;
 
-import java.util.Vector;
+import java.util.Collection;
 
 import mhcs.model.Module;
 import mhcs.model.ModuleList;
@@ -16,22 +16,24 @@ import mhcs.model.StandardModule;
 
 public class counters{
 	//initialize each counter to zero
-	Integer plain = 0;
-	Integer airlock = 0;
-	Integer hosp = 0;
-	Integer dorm = 0;
-	Integer food = 0;
-	Integer sanit = 0;
-	Integer power = 0;
-	Integer control = 0;
-	Integer gym = 0;
-	Integer canteen =0;
+	private Integer plain = 0;
+	private Integer airlock = 0;
+	private Integer hosp = 0;
+	private Integer dorm = 0;
+	private Integer food = 0;
+	private Integer sanit = 0;
+	private Integer power = 0;
+	private Integer control = 0;
+	private Integer gym = 0;
+	private Integer canteen =0;
 	
 	public counters(ModuleList mList){
 		//iterate through list; count occurance of each module type
-		Vector<Module> vMods = mList.getModules();getClass();
-		for (int i=0; i<=vMods.size(); i++){
-			Integer id = vMods.elementAt(i).getIdNumber();
+		Collection<Module> vMods = mList.getModules();
+		Module mod = null;
+		for(Module iterator : vMods){
+			mod = iterator;
+			Integer id = mod.getIdNumber();
 			//if the moudule falls between these number, a module is added to the type of module for example, plain
 			if(id >= 1 && id <= 40) 
 				plain++;
@@ -53,7 +55,6 @@ public class counters{
 				airlock++;
 			else if (id >=181 && id <= 184)
 				hosp++;
-			else{;}//if the number does not match, don't add anything. This shoulden't happen based on our add method
 		}
 	}
 	public boolean minConfigPossible(){
