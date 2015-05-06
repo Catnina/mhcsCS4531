@@ -37,6 +37,10 @@ h1 {
   margin: 5px;
 }
 
+.translatePanel {
+  margin-top: 40px;
+}
+
 .serverResponseLabelError {
   color: red;
 }

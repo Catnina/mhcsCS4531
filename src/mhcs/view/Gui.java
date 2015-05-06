@@ -108,6 +108,7 @@ public class Gui implements EntryPoint{
 		   moduleList = new ModuleList();
 		   configList = new ModuleList();
 		   backPanel.add(container, "Main Page");
+		   RootLayoutPanel.get().setStylePrimaryName("translatePanel");
 		   RootLayoutPanel.get().add(backPanel);   
 		   soundController.setDefaultVolume(100);
 		   //soundController.setPreferredSoundTypes(SoundType.HTML5);
@@ -672,13 +673,16 @@ public class Gui implements EntryPoint{
 						configList = config.getConfigModList();
 					}
 					else if(choice == 1){
-						//min2
+						config = mcBuild.buildMinConfigTwo();
+						configList = config.getConfigModList();
 					}
 					else if(choice == 2){
-						//full 1
+						config = cBuild.buildCupConfiguration();
+						configList = config.getConfigModList();
 					}
 					else{
-						//full 2
+						config = cBuild.buildCrossConfiguration();
+						configList = config.getConfigModList();
 					}
 					
 					saveConfig();
