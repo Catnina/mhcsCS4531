@@ -24,6 +24,7 @@ public class ConfigurationBuilder {
 	private Integer CONTROL = 7;
 	private Integer AIRLOCK = 20;
 	private Integer MEDICAL = 10;
+	private Integer OFFSET = 12;
 	
 	public ConfigurationBuilder(ModuleList list) {
 		modList = list;
@@ -33,26 +34,48 @@ public class ConfigurationBuilder {
 		Configuration config;
 		PriorityQueue<TemplateBlock> templateQueue = buildCrossTemplate();
 		ArrayList<TemplateBlock> template;
+		Integer x, y;
 		
 		templateQueue = buildSkeleton(templateQueue);
 		
 		template = fleshCross(templateQueue);
 		
-		config = new Configuration( averageX(), averageY(), template, qualityCalculator(36));
+		x = averageX();
+		y = averageY();
+		
+		if( x < OFFSET.intValue()) {
+			x = OFFSET.intValue();
+		}
+		if( y < OFFSET.intValue()) {
+			y = OFFSET.intValue();
+		}
+		
+		config = new Configuration( x, y, template, qualityCalculator(36));
 		
 		return config;
 	}
-	//   To be added if time allows
 	public Configuration buildCupConfiguration() {
 		Configuration config;
 		PriorityQueue<TemplateBlock> templateQueue = buildCupTemplate();
 		ArrayList<TemplateBlock> template;
+		Integer x, y;
 		
 		templateQueue = buildSkeleton(templateQueue);
 		
 		template = fleshCup(templateQueue);
 		
-		config = new Configuration( averageX(), averageY(), template, qualityCalculator(34));
+		x = averageX();
+		y = averageY();
+		
+		if( x < OFFSET.intValue()) {
+			x = OFFSET.intValue();
+		}
+		if( y < OFFSET.intValue()) {
+			y = OFFSET.intValue();
+		}
+		
+		
+		config = new Configuration( x, y, template, qualityCalculator(34));
 		
 		return config;
 	}

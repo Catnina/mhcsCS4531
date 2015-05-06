@@ -12,6 +12,7 @@ public class Configuration {
 	private Integer absoluteY;
 	private ArrayList<TemplateBlock> list;
 	private Integer quality;
+	private Integer OFFSET = 12;
 	
 	public Configuration(Integer x, Integer y, ArrayList<TemplateBlock> key, Integer configurationQuality) {
 		absoluteX = x;
@@ -72,6 +73,37 @@ public class Configuration {
 	}
 	protected void setQuality(Integer newQuality) {
 		quality = newQuality;
+	}
+	
+	public void moveCenterOfGravity(Integer x, Integer y) {
+		if (x > OFFSET && y > OFFSET) {
+			Integer oldX = averageX();
+			Integer oldY = averageY();
+			
+			absoluteX += x - oldX;
+			absoluteY += y - oldY;
+		}
+	}
+	
+	private Integer averageX() {
+		Integer sum = 0;
+		Integer count = 0;
+		for(TemplateBlock template: list) {
+			sum += template.getXOffset();
+			++count;
+		}
+		
+		return (sum / count);
+	}
+	private Integer averageY() {
+		Integer sum = 0;
+		Integer count = 0;
+		for(TemplateBlock template: list) {
+			sum += template.getYOffset();
+			++count;
+		}
+		
+		return (sum / count);
 	}
 	
 	public String toString() {
