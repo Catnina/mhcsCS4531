@@ -82,7 +82,7 @@ public class Gui implements EntryPoint{
 	private int counter = 0;
 	private Label configPoss; //this label appears in the top left hand corner of the main page and tells if a minimum configuration is possible
 	private ModuleMap modMap = new ModuleMap();
-	private Button getConfigs, before, after;
+	private Button getConfigs, before, after, mapButton;
 	//these are the add button listener values (become the value in the add fields) they are set to their inital states. 
 	private String conditionString = "Usable"; 
 	private Integer xNumb = 1;
@@ -201,20 +201,28 @@ public class Gui implements EntryPoint{
             	    }
             	});
               
-              VerticalPanel mapButtons = new VerticalPanel();
-              Button moduleMapButton = new Button ("View Module Map", new ClickHandler() {
+              //VerticalPanel mapButtons = new VerticalPanel();
+              mapButton = new Button ("View Configuration Map", new ClickHandler() {
           	   public void onClick(ClickEvent event) { 
-          		   modMap.renderMap(moduleList);
+          		   Button tempButton = (Button) event.getSource();
+          		   if(tempButton.getText() == "View Configuration Map") {
+          			   tempButton.setText("View Module Map");
+          			   modMap.renderMap(configList);
+          		   }
+          		   else {
+          			   modMap.renderMap(moduleList);
+          			   tempButton.setText("View Configuration Map");
+          		   }
           	   }
               });
-              Button configMapButton = new Button ("View Configuration Map", new ClickHandler() {
-           	   public void onClick(ClickEvent event) { 
-           		   modMap.renderMap(configList);
-           	   }
-               });
-              mapButtons.add(moduleMapButton);
-              mapButtons.add(configMapButton);
-              southPanel.add(mapButtons);
+//              Button configMapButton = new Button ("View Configuration Map", new ClickHandler() {
+//           	   public void onClick(ClickEvent event) { 
+//           		   modMap.renderMap(configList);
+//           	   }
+//               });
+//              mapButtons.add(moduleMapButton);
+//              mapButtons.add(configMapButton);
+              southPanel.add(mapButton);
               
               before.setEnabled(false);
                southPanel.add(before);
@@ -477,6 +485,7 @@ public class Gui implements EntryPoint{
 		      		//if sucessful play sound, update configuration possible and close popup panel
 			        pPanel.hide();
 			        modMap.renderMap(moduleList);
+			        mapButton.setText("View Configuration Map");
 			        saveModules();
 	    	  		Sound added = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"sounds/added.mp3");
 			        added.play();
@@ -511,6 +520,7 @@ public class Gui implements EntryPoint{
 			  	        	  moduleArray.remove(removeTarget);
 			  	              moduleInfo.removeRow(removeTarget + 1);
 			  	              modMap.renderMap(moduleList);
+			  	              mapButton.setText("View Configuration Map");
 			  	              saveModules();
 			  	              checkMinConfig();
 		  	        	  }
@@ -601,6 +611,7 @@ public class Gui implements EntryPoint{
 	 			             String rt = response.getText();
 	 			             update(rt); //METHOD CALL TO DO SOMETHING WITH RESPONSE TEXT
 	 				         modMap.renderMap(moduleList);
+	 				         mapButton.setText("View Configuration Map");
 	 			             pPanel.hide();
 	 			         } else {
 	 			        	 Window.alert("Couldn't retrieve JSON (" + response.getStatusText() + ")"); 
@@ -969,6 +980,7 @@ public class Gui implements EntryPoint{
 			  	        	  moduleArray.remove(removeTarget);
 			  	              moduleInfo.removeRow(removeTarget + 1);
 			  	              modMap.renderMap(moduleList);
+			  	              mapButton.setText("View Configuration Map");
 			  	              checkMinConfig();
 			  	              saveModules();
 		  	        	  }
