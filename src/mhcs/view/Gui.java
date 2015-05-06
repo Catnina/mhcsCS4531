@@ -200,6 +200,22 @@ public class Gui implements EntryPoint{
             			modMap.renderMap(moduleList);
             	    }
             	});
+              
+              VerticalPanel mapButtons = new VerticalPanel();
+              Button moduleMapButton = new Button ("View Module Map", new ClickHandler() {
+          	   public void onClick(ClickEvent event) { 
+          		   modMap.renderMap(moduleList);
+          	   }
+              });
+              Button configMapButton = new Button ("View Configuration Map", new ClickHandler() {
+           	   public void onClick(ClickEvent event) { 
+           		   modMap.renderMap(configList);
+           	   }
+               });
+              mapButtons.add(moduleMapButton);
+              mapButtons.add(configMapButton);
+              southPanel.add(mapButtons);
+              
               before.setEnabled(false);
                southPanel.add(before);
               after = new Button ("After", new ClickHandler() {
