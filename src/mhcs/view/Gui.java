@@ -650,34 +650,18 @@ public class Gui implements EntryPoint{
 		verticalChoicePanel.add(chooseConfig);
 		Button chooseButton = new Button("Choose", new ClickHandler(){
 			  public void onClick(ClickEvent event){
-				  if (new counters(moduleList).minConfigPossible()){
-					  pPanel.hide();
-						final PopupPanel tempPP = new PopupPanel();
-						 VerticalPanel vPanelTemp = new VerticalPanel();
-						 vPanelTemp.add(new Label("making configuations"));
-			      		 Button tempButton = new Button("OK", new ClickHandler(){
-			      			 public void onClick(ClickEvent event){
-			      				 tempPP.hide();
-			      			 }
-			      		 });
-			      		 vPanelTemp.add(tempButton);
-			      		 tempPP.add(vPanelTemp);
-			      		 tempPP.show();	
-			      	}
-					else{
-						pPanel.hide();
-						final PopupPanel tempPP = new PopupPanel();
-						 VerticalPanel vPanelTemp = new VerticalPanel();
-						 vPanelTemp.add(new Label("Not enought modules to make configurations"));
-			      		 Button tempButton = new Button("OK", new ClickHandler(){
-			      			 public void onClick(ClickEvent event){
-			      				 tempPP.hide();
-			      			 }
-			      		 });
-			      		 vPanelTemp.add(tempButton);
-			      		 tempPP.add(vPanelTemp);
-			      		 tempPP.show();
-					}
+					pPanel.hide();
+					final PopupPanel tempPP = new PopupPanel();
+					VerticalPanel vPanelTemp = new VerticalPanel();
+				    vPanelTemp.add(new Label("making configuations"));
+			      	Button tempButton = new Button("OK", new ClickHandler(){
+			      	public void onClick(ClickEvent event){
+			      		 tempPP.hide();
+			      	   }
+			      	});
+			        vPanelTemp.add(tempButton);
+			        tempPP.add(vPanelTemp);
+			      	tempPP.show();	
 			  }
 		  });
 		verticalChoicePanel.add(chooseButton);
@@ -685,9 +669,32 @@ public class Gui implements EntryPoint{
 		
 		StackLayoutPanel configsPanel = new StackLayoutPanel(Unit.CM);
 		HorizontalPanel min = new HorizontalPanel();
-		min.add(new Label("minimum configurations here"));
+		VerticalPanel min1 = new VerticalPanel();
+		min1.add(new Label("Minimum 1"));
+		Image min1Img = new Image("img/min1.png");
+		min1Img.setPixelSize(275, 275);
+		min1.add(min1Img);
+		VerticalPanel min2 = new VerticalPanel();
+		min2.add(new Label("Minimum 2"));
+		Image min2Img = new Image("img/min2.png");
+		min2Img.setPixelSize(275, 275);
+		min2.add(min2Img);
+		min.add(min1);
+		min.add(min2);
+
 		HorizontalPanel full = new HorizontalPanel();
-		full.add(new Label("full configurations here"));
+		VerticalPanel full1 = new VerticalPanel();
+		full1.add(new Label("Full 1"));
+		Image full1Img = new Image("img/full-Cup.png");
+		full1Img.setPixelSize(275, 275);
+		full1.add(full1Img);
+		VerticalPanel full2 = new VerticalPanel();
+		full2.add(new Label("Full 2"));
+		Image full2Img = new Image("img/full-Cross.png");
+		full2Img.setPixelSize(275, 275);
+		full2.add(full2Img);
+		full.add(full1);
+		full.add(full2);
 
 		configsPanel.add(min, new HTML("Minimum Configurations"),1.5);
         configsPanel.add(full, new HTML("Full Configurations"), 1.5);
