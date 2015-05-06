@@ -8,6 +8,8 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * Creates a Popup that displays a given module's info
@@ -43,6 +45,19 @@ public class ModuleInfoPopup extends PopupPanel {
 		
 		tabs.add(infoGrid, "Module Info");
 		
+		VerticalPanel edit = new VerticalPanel();
+		edit.add(new Label("Edit Module (ID: " + mod.getIdNumber() + "):"));
+		TextBox xBox = new TextBox();
+		xBox.setText("" + mod.getXCoordinate());
+		edit.add(new Label("X Coordinate:"));
+		edit.add(xBox);
+		TextBox yBox = new TextBox();
+		yBox.setText("" + mod.getXCoordinate());
+		edit.add(new Label("Y Coordinate:"));
+		edit.add(yBox);
+		
+		
+		
 //		tabs.add(new Label("Type: " + mod.getType() + 
 //				"\nModule ID Nuber: " + mod.getIdNumber() +
 //				"\nX-Coordinate: " + mod.getXCoordinate() +
@@ -50,7 +65,7 @@ public class ModuleInfoPopup extends PopupPanel {
 //				"\nCondition: " + mod.getCondition() +
 //				"Orientation: " + mod.getOrientation()), "Module Info");
 		
-		tabs.add(new HTML("This is not the functionality you're looking for..."), "Edit Module");
+		tabs.add(edit, "Edit Module");
 		tabs.setSize("200px", "350px");
 		
 		//Label modInfo = new Label(info);

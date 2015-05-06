@@ -60,9 +60,15 @@ import com.google.gwt.json.client.JSONString;
 
 public class Gui implements EntryPoint{
 	
+	/*
+	 * Shouldn't all this stuff be private?!?!?!?!
+	 */
+	
 	private Storage moduleStore;
 	Date endDate, currentDate;
-	public ModuleList moduleList; // this is the module list!! It must be passed whenever we add (or remove) modules or print the map
+	private ModuleList moduleList; // this is the module list!! It must be passed whenever we add (or remove) modules or print the map
+	private ModuleList configList; // configurations list
+	
 	Integer caseNumb; //this integer holds which test case we are running from NASA/ESA feed (for User Story 1) 
 	SoundController soundController = new SoundController(); // this enables the use of sound output at any place throught the GUI
 	//DockLayoutPanel dockPanel = new DockLayoutPanel(Unit.CM); // this is the dock that the main page is built off of
@@ -95,6 +101,7 @@ public class Gui implements EntryPoint{
 	   public void onModuleLoad() {	
 		   caseNumb = 1;
 		   moduleList = new ModuleList();
+		   configList = new ModuleList();
 		   //moduleStore = Storage.getLocalStorageIfSupported();
 		   
 		   
@@ -852,6 +859,50 @@ public class Gui implements EntryPoint{
 		}
 	}
 	
+	/**
+	 * Saves current configuration
+	 */
+	public void saveConfig() {
+		moduleStore = Storage.getLocalStorageIfSupported();
+		if(moduleStore != null) {
+			moduleStore.setItem("config", configList.toJSONString());
+		}
+	}
+	
+	/**
+	 * Loads saved configuration
+	 */
+	public void loadConfig() {
+		moduleStore = Storage.getLocalStorageIfSupported();
+		if(moduleStore != null) {
+			String config = moduleStore.getItem("config");
+			if(config != null && config != "[]") {
+				JSONArray jA = (JSONArray) JSONParser.parseLenient(config);
+				JSONNumber jN;
+				JSONString jS;
+				ModuleMaker make = new ModuleMaker(configList);
+				int xCoordinate, yCoordinate, turnsToUpright;
+				String condition = null;
+				for(int i = 0; i < jA.size(); i++) {
+					final int idNumber;
+					JSONObject jO = (JSONObject) jA.get(i);
+					jN = (JSONNumber) jO.get("code");
+					idNumber = (int) jN.doubleValue();
+					moduleArray.add(Integer.toString(idNumber));
+					jS = (JSONString) jO.get("status");
+					condition = jS.stringValue();
+					jN = (JSONNumber) jO.get("turns");
+					turnsToUpright = (int) jN.doubleValue();
+					jN = (JSONNumber) jO.get("X");
+					xCoordinate = (int) jN.doubleValue();
+					jN = (JSONNumber) jO.get("Y");
+					yCoordinate = (int) jN.doubleValue();
+					make.createModule(idNumber, xCoordinate, yCoordinate, turnsToUpright, condition);
+				}
+			}
+		}
+	}
+					
 	/**
 	 * Loads Modules from local store onto the module list
 	 */
