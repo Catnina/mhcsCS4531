@@ -24,7 +24,10 @@ public class ConfigurationBuilder {
 	private Integer CONTROL = 7;
 	private Integer AIRLOCK = 20;
 	private Integer MEDICAL = 10;
+	
 	private Integer OFFSET = 12;
+	private Integer X_SIZE = 100;
+	private Integer Y_SIZE = 50;
 	
 	public ConfigurationBuilder(ModuleList list) {
 		modList = list;
@@ -70,8 +73,15 @@ public class ConfigurationBuilder {
 		if( x < OFFSET.intValue()) {
 			x = OFFSET.intValue();
 		}
+		if( y > (X_SIZE.intValue() - OFFSET.intValue()) ) {
+			y = X_SIZE.intValue() - OFFSET.intValue();
+		}
+		
 		if( y < OFFSET.intValue()) {
 			y = OFFSET.intValue();
+		}
+		if( y > (Y_SIZE.intValue() - OFFSET.intValue()) ) {
+			y = Y_SIZE.intValue() - OFFSET.intValue();
 		}
 		
 		
