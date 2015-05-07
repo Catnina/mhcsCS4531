@@ -91,7 +91,7 @@ public class Gui implements EntryPoint{
 	private int counter = 0;
 	private Label configPoss; //this label appears in the top left hand corner of the main page and tells if a minimum configuration is possible
 	private ModuleMap modMap = new ModuleMap();
-	private Button getConfigs, before, after, mapButton, saveConfigButton;
+	private Button getConfigs, before, after, mapButton, saveConfigButton, changeCenter;
 	//these are the add button listener values (become the value in the add fields) they are set to their inital states. 
 	private String conditionString = "Usable"; 
 	private Integer xNumb = 1;
@@ -130,14 +130,15 @@ public class Gui implements EntryPoint{
 	   private void loginPage(){
 		   final PopupPanel login = new PopupPanel();
 		   login.setGlassEnabled(true);
-		   login.center();
 		   final TextBox utb = new TextBox(); 
+		   Image nasa = new Image("img/nasa.png");
 		   final Label tbUser = new Label("Enter Username");
 		   final PasswordTextBox ptb = new PasswordTextBox();
 		   final Label tb = new Label("Enter Password:");
 		   final VerticalPanel vPanel = new VerticalPanel();
 		   vPanel.setWidth("4cm");
 		   final Button enter = new Button("Enter");
+		   vPanel.add(nasa);
 		    vPanel.add(tbUser);
 		    vPanel.add(utb);
 		    vPanel.add(tb);
@@ -208,11 +209,7 @@ public class Gui implements EntryPoint{
       		    });
               getConfigs.setEnabled(false);
                  southPanel.add(getConfigs);
-              before = new Button ("Before", new ClickHandler() {
-            	public void onClick(ClickEvent event) {
-            			modMap.renderMap(moduleList);
-            	    }
-            	});
+              
               
               //VerticalPanel mapButtons = new VerticalPanel();
               mapButton = new Button ("View Configuration Map", new ClickHandler() {
@@ -245,15 +242,22 @@ public class Gui implements EntryPoint{
 //              mapButtons.add(configMapButton);
               southPanel.add(mapButton);
               
-              before.setEnabled(false);
+              before = new Button ("Before", new ClickHandler() {
+              	public void onClick(ClickEvent event) {
+           		   Button tempButton = (Button) event.getSource();
+              		if(tempButton.getText() == "Before"){
+              			modMap.renderMap(beforeList);
+              			before.setText("After");
+              		}
+              			else{
+              				modMap.renderMap(configList);
+              				before.setText("Before");
+              			}
+              	    }
+              	});
+              before.setVisible(false);
                southPanel.add(before);
-              after = new Button ("After", new ClickHandler() {
-                public void onClick(ClickEvent event) {
-               	 	modMap.renderMap(configList);  
-                   }
-                });
-               after.setEnabled(false);
-                southPanel.add(after);
+
                
                saveConfigButton = new Button("Save Configuration", new ClickHandler() {
             	   	public void onClick(ClickEvent event) {
@@ -282,6 +286,51 @@ public class Gui implements EntryPoint{
                });
                
                southPanel.add(saveConfigButton);
+               
+              
+                  changeCenter = new Button ("Center of Gravity", new ClickHandler() {
+                	   public void onClick(ClickEvent event) { 
+                		  final PopupPanel pPanel = new PopupPanel();
+                		  pPanel.show();
+                		  pPanel.setGlassEnabled(true);
+                		  pPanel.setAutoHideEnabled(true);
+                		  final HorizontalPanel xMove = new HorizontalPanel();
+               	          final HorizontalPanel yMove = new HorizontalPanel();
+               	          final VerticalPanel change = new VerticalPanel();
+               	          final Label xLabel = new Label("x");
+               	          final Label yLabel = new Label("y");
+               	          final TextBox xBox = new TextBox(); 
+               	          final TextBox yBox = new TextBox();   
+               	          xMove.add(xLabel);
+               	          xMove.add(xBox);
+               	          yMove.add(yLabel);
+               	          yMove.add(yBox);
+               	          change.add(xMove);
+               	          change.add(yMove);
+                		  pPanel.add(change);
+                		  Button submit = new Button("Submit", new ClickHandler() {
+                			  public void onClick(ClickEvent event) {
+                				  if (Integer.parseInt(xBox.getText()) < 14 || Integer.parseInt(xBox.getText()) > 86) {
+                					  Window.alert("x value must be greater than 14 and less than 86");
+                				  }
+                				  else if (Integer.parseInt(yBox.getText()) < 14 || Integer.parseInt(yBox.getText()) > 36) {
+                					  Window.alert("y value must be greater than 14 and less than 36");
+                				  }
+                				  else {
+                					 pPanel.hide();
+                  				     config.moveCenterOfGravity(Integer.parseInt(xBox.getText()), Integer.parseInt(yBox.getText()));
+                  				     modMap.renderMap(config.getConfigModList());
+                  				     configList = config.getConfigModList();
+                				  }
+                				  
+               			  }
+                		  });
+                		  change.add(submit);
+                		  pPanel.add(change);
+                	   }
+                    });
+                 southPanel.add(changeCenter);
+
                
                
                quality = new Label ("Configuration Quality: "+qualityInt);
@@ -715,6 +764,7 @@ public class Gui implements EntryPoint{
 					ConfigurationBuilder cBuild = new ConfigurationBuilder(moduleList);
 					MinConfigurationBuilder mcBuild = new MinConfigurationBuilder(moduleList);
 					beforeList = moduleList;
+					before.setVisible(true);
 
 					//
 					if(choice == 0){
