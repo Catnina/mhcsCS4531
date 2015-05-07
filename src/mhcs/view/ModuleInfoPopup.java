@@ -44,7 +44,7 @@ public class ModuleInfoPopup extends PopupPanel {
 		infoGrid.setWidget(5, 0, turns);
 		
 		tabs.add(infoGrid, "Module Info");
-		
+		/*
 		VerticalPanel edit = new VerticalPanel();
 		edit.add(new Label("Edit Module (ID: " + mod.getIdNumber() + "):"));
 		TextBox xBox = new TextBox();
@@ -66,6 +66,7 @@ public class ModuleInfoPopup extends PopupPanel {
 //				"Orientation: " + mod.getOrientation()), "Module Info");
 		
 		tabs.add(edit, "Edit Module");
+		*/
 		tabs.setSize("200px", "350px");
 		
 		//Label modInfo = new Label(info);
