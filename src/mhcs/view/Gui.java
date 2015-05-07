@@ -62,16 +62,13 @@ import com.google.gwt.json.client.JSONString;
 
 
 public class Gui implements EntryPoint{
-	
-	/*
-	 * Shouldn't all this stuff be private?!?!?!?!
-	 */
-	
+
 	private Storage moduleStore;
 	private Date endDate, currentDate;
 	private ModuleList moduleList; // this is the module list!! It must be passed whenever we add (or remove) modules or print the map
 	private ModuleList configList; // configurations list
 	private ModuleList beforeList; // configurations list
+	private ModuleMaker modMaker;
 	private Configuration config;
 	private Label quality;
 
@@ -91,7 +88,8 @@ public class Gui implements EntryPoint{
 	private int counter = 0;
 	private Label configPoss; //this label appears in the top left hand corner of the main page and tells if a minimum configuration is possible
 	private ModuleMap modMap = new ModuleMap();
-	private Button getConfigs, before, after, mapButton, saveConfigButton, changeCenter;
+	private Button getConfigs, before, after, mapButton, saveConfigButton, clearButton, changeCenter;
+
 	//these are the add button listener values (become the value in the add fields) they are set to their inital states. 
 	private String conditionString = "Usable"; 
 	private Integer xNumb = 1;
@@ -180,6 +178,7 @@ public class Gui implements EntryPoint{
 		   loadModules();
 		   loadConfig();
 		   
+		   modMaker= new ModuleMaker(moduleList);
 		   final HorizontalPanel southPanel = new HorizontalPanel();
 		   southPanel.setWidth("15cm");
 		   final HorizontalPanel northPanel = new HorizontalPanel();
@@ -202,6 +201,22 @@ public class Gui implements EntryPoint{
 		    }
 		    });
            southPanel.add(removeModule);
+		   Button clearButton= new Button("Clear Modules", new ClickHandler() {
+	            public void onClick(ClickEvent event) {
+	            	boolean choice = Window.confirm("Do you wish to clear all modules?");
+	            	if (choice) {
+	            		clearModuleList();
+	            		moduleInfo.setText(0, 0, "Module Code");
+	              	    moduleInfo.setText(0, 1, "X-Coord");
+	              	    moduleInfo.setText(0, 2, "Y-Coord");
+	              	    moduleInfo.setText(0, 3, "Condition");
+	              	    moduleInfo.setText(0, 4, "Rotations");
+	              	    moduleInfo.setText(0, 5, "Remove");
+	            	}
+	            }
+	            });
+          southPanel.add(clearButton);
+
            getConfigs = new Button ("Get Configurations", new ClickHandler() {
       	        public void onClick(ClickEvent event) {
       	        	getConfigurations();   	//this button will direct the user to get cofigurations pop=up panel where they can view 4 configuratiosn	    
@@ -582,59 +597,17 @@ public class Gui implements EntryPoint{
 	        	 //PopupPanel temp1  = new PopupPanel();
 			        //temp1.add(new Label(configNumb + "   " + xNumb + "   " + yNumb + "   " + orientNumb + "   " + conditionString));
 			      	 //temp1.show();
-		      	boolean addModuleSucess = new ModuleMaker(moduleList).createModule(configNumb, xNumb, yNumb, orientNumb, conditionString);
+		      	boolean addModuleSucess = modMaker.createModule(configNumb, xNumb, yNumb, orientNumb, conditionString);
 		      	//this statement puts all the data collected in teh above editable fields and passes it into the moduleMaker
 		      	if(addModuleSucess){
 		      		//if sucessful play sound, update configuration possible and close popup panel
 			        pPanel.hide();
 			        modMap.renderMap(moduleList);
+			        updateModuleInfo();
 			        mapButton.setText("View Configuration Map");
 			        saveModules();
 	    	  		Sound added = soundController.createSound(Sound.MIME_TYPE_AUDIO_BASIC,"sounds/added.mp3");
 			        added.play();
-			        final int row = moduleInfo.getRowCount();
-			        final int conNumb = configNumb;
-			        final int xCord = xNumb;
-			        final int yCord = yNumb;
-			        final String condString = conditionString;
-			        final int oNumb = orientNumb;
-			        moduleArray.add(configNumb.toString());
-			        //adds the module info into the flextable and adds a button to remove it.
-			        //the modulearray is used to store modules for the moduleInfo FlexTable.
-			        //the moduleList class does not return an integer location of the module.
-			        //that is the reason for the modulearray. If another, better option is
-			        //available we can use that.
-			        //This same logic is used in the update method for getting NasaEsa information
-			        //and on loading modules.
-			        moduleInfo.setText(row, 0, Integer.toString(conNumb));
-		      	    moduleInfo.setText(row, 1, Integer.toString(xCord));
-		      	    moduleInfo.setText(row, 2, Integer.toString(yCord));
-		      	    moduleInfo.setText(row, 3, condString);
-		      	    moduleInfo.setText(row, 4, Integer.toString(oNumb));
-		      	    Button removeModuleButton = new Button("x");
-		  	        removeModuleButton.addClickHandler(new ClickHandler() {
-		  	          public void onClick(ClickEvent event) {
-		  	        	  boolean delete = Window.confirm("Are you sure you wish to delete this module?");
-		  	        	  if (delete) {
-			  	        	  int removeTarget = moduleArray.indexOf(Integer.toString(conNumb));
-			  	        	  int t = Integer.parseInt(moduleInfo.getText(removeTarget + 1, 0));
-			  	    		  Module target = moduleList.getModuleByIdNumber(t);
-			  	  		      moduleList.removeModule(target);
-			  	        	  moduleArray.remove(removeTarget);
-			  	              moduleInfo.removeRow(removeTarget + 1);
-			  	              modMap.renderMap(moduleList);
-			  	              mapButton.setText("View Configuration Map");
-			  	              saveModules();
-			  	              checkMinConfig();
-		  	        	  }
-		  	        	  else {
-		  	        		  Window.alert("Deletion cancelled");
-		  	        	  }
-		  	          }
-		  	        });
-		  	        moduleInfo.setWidget(row, 5, removeModuleButton);
-		      	    
-		  	        checkMinConfig();
 	    	  	  }
           	  	  else{
           	  		  //if it's not sucessful, hid the popup panel, make a new popup that tells the user that they were unable
@@ -712,10 +685,13 @@ public class Gui implements EntryPoint{
 	 			      public void onResponseReceived(Request request, Response response) {
 	 			         if (200 == response.getStatusCode()) {
 	 			             String rt = response.getText();
-	 			             update(rt); //METHOD CALL TO DO SOMETHING WITH RESPONSE TEXT
-	 				         modMap.renderMap(moduleList);
-	 				         mapButton.setText("View Configuration Map");
-	 			             pPanel.hide();
+	 			             boolean choice = Window.confirm("Pulling a test case will delete current module list. Are you sure you want to continue?");
+	 			             if (choice) {
+	 			            	 update(rt); //METHOD CALL TO DO SOMETHING WITH RESPONSE TEXT
+		 				         modMap.renderMap(moduleList);
+		 				         mapButton.setText("View Configuration Map");
+		 			             pPanel.hide();
+	 			             }
 	 			         } else {
 	 			        	 Window.alert("Couldn't retrieve JSON (" + response.getStatusText() + ")"); 
 	 			        	 pPanel.hide(); //needed so that user can access stuff after this alert is thrown
@@ -928,7 +904,6 @@ public class Gui implements EntryPoint{
         if (diff <= 0) {
         	counter ++;
         	recalibrate = true;
-        	stackPanel.animate(10);
         	//this will make it so ten day alert does not keep bugging you
         	//only alerts you once
         	if (counter <= 1)
@@ -963,6 +938,14 @@ public class Gui implements EntryPoint{
     double turns; 
     double x;
     double y;
+    clearModuleList();
+    moduleInfo.clear();
+    moduleInfo.setText(0, 0, "Module Code");
+	moduleInfo.setText(0, 1, "X-Coord");
+    moduleInfo.setText(0, 2, "Y-Coord");
+    moduleInfo.setText(0, 3, "Condition");
+    moduleInfo.setText(0, 4, "Rotations");
+    moduleInfo.setText(0, 5, "Remove");
     Integer sucessCounter = 0;
     int row = moduleInfo.getRowCount()+1;
     for (int i = 0; i < jA.size(); i++) {
@@ -971,6 +954,7 @@ public class Gui implements EntryPoint{
     	jN = (JSONNumber) jO.get("code");
     	code = (int) jN.doubleValue();
     	moduleInfo.setText(row, 0, Integer.toString((int) code));
+    	moduleArray.add(Integer.toString(code));
     	jS = (JSONString) jO.get("status");
     	status = jS.stringValue();
     	moduleInfo.setText(row, 3, status);
@@ -1004,7 +988,7 @@ public class Gui implements EntryPoint{
 	          }
 	        });
 	        moduleInfo.setWidget(row, 5, removeModuleButton);
-      	boolean addModuleSucess = new ModuleMaker(moduleList).createModule((int)code, (int)x, (int)y, (int)turns, status);
+      	boolean addModuleSucess = modMaker.createModule((int)code, (int)x, (int)y, (int)turns, status);
       	if(addModuleSucess){
       		sucessCounter++;
       		row++;
@@ -1168,12 +1152,68 @@ public class Gui implements EntryPoint{
 	
 	private void checkMinConfig() {
 		if (new counters(moduleList).minConfigPossible()){
+			configPoss.getElement().getStyle().setColor("green");
 			configPoss.setText("minimum configuration possible!");
 			getConfigs.setEnabled(true);
 		}
 		else{
+			configPoss.getElement().getStyle().setColor("red");
 			configPoss.setText("minimum configuration NOT possible");
 			getConfigs.setEnabled(false);
 		}
 	}	
+	private void updateModuleInfo() {
+		final int row = moduleInfo.getRowCount();
+        final int conNumb = configNumb;
+        final int xCord = xNumb;
+        final int yCord = yNumb;
+        final String condString = conditionString;
+        final int oNumb = orientNumb;
+        moduleArray.add(configNumb.toString());
+        //adds the module info into the flextable and adds a button to remove it.
+        //the modulearray is used to store modules for the moduleInfo FlexTable.
+        //the moduleList class does not return an integer location of the module.
+        //that is the reason for the modulearray.
+        //This same logic is used in the update method for getting NasaEsa information
+        //and on loading modules.
+        moduleInfo.setText(row, 0, Integer.toString(conNumb));
+  	    moduleInfo.setText(row, 1, Integer.toString(xCord));
+  	    moduleInfo.setText(row, 2, Integer.toString(yCord));
+  	    moduleInfo.setText(row, 3, condString);
+  	    moduleInfo.setText(row, 4, Integer.toString(oNumb));
+  	    Button removeModuleButton = new Button("x");
+	        removeModuleButton.addClickHandler(new ClickHandler() {
+	          public void onClick(ClickEvent event) {
+	        	  boolean delete = Window.confirm("Are you sure you wish to delete this module?");
+	        	  if (delete) {
+	  	        	  int removeTarget = moduleArray.indexOf(Integer.toString(conNumb));
+	  	        	  int t = Integer.parseInt(moduleInfo.getText(removeTarget + 1, 0));
+	  	    		  Module target = moduleList.getModuleByIdNumber(t);
+	  	  		      moduleList.removeModule(target);
+	  	  		      //modMaker.remove(target.getIdNumber());
+	  	        	  moduleArray.remove(removeTarget);
+	  	              moduleInfo.removeRow(removeTarget + 1);
+	  	              modMap.renderMap(moduleList);
+	  	              saveModules();
+	  	              checkMinConfig();
+	        	  }
+	        	  else {
+	        		  Window.alert("Deletion cancelled");
+	        	  }
+	          }
+	        });
+	        moduleInfo.setWidget(row, 5, removeModuleButton);
+  	    
+	        checkMinConfig();
+	}
+	
+	public void clearModuleList() {
+		 moduleList.clearList();
+		 moduleArray.clear();
+		 moduleInfo.removeAllRows();
+		 modMap.renderMap(moduleList);
+		 modMaker.clear();
+		 configList.clearList();
+		 saveModules();
+	}
 }
