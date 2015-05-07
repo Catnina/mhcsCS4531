@@ -72,6 +72,7 @@ public class Gui implements EntryPoint{
 	private ModuleList moduleList; // this is the module list!! It must be passed whenever we add (or remove) modules or print the map
 	private ModuleList configList; // configurations list
 	private Configuration config;
+	Label quality;
 
 	
 	private Integer caseNumb; //this integer holds which test case we are running from NASA/ESA feed (for User Story 1) 
@@ -215,18 +216,21 @@ public class Gui implements EntryPoint{
           	   public void onClick(ClickEvent event) { 
           		   Button tempButton = (Button) event.getSource();
           		   if(tempButton.getText() == "View Configuration Map") {
+          			   quality.setVisible(true);
           			   tempButton.setText("View Module Map");
           			   modMap.renderMap(configList);
           		   }
           		   else {
           			   modMap.renderMap(moduleList);
           			   tempButton.setText("View Configuration Map");
+          			   quality.setVisible(false);
           		   }
           	   }
               });
               
               //CARLOS'S CODE
-              Label quality = new Label ("Configuration Quality: "+ config.getQuality());
+              quality = new Label ("Configuration Quality: "+ config.getQuality());
+              quality.setVisible(false);
               southPanel.add(quality);
               
 //              Button configMapButton = new Button ("View Configuration Map", new ClickHandler() {
