@@ -738,7 +738,7 @@ public class Gui implements EntryPoint{
 			  public void onClick(ClickEvent event){
 					
 					//make configurations
-					Configuration config;
+					//Configuration config;
 					ConfigurationBuilder cBuild = new ConfigurationBuilder(moduleList);
 					MinConfigurationBuilder mcBuild = new MinConfigurationBuilder(moduleList);
 					beforeList = moduleList;
