@@ -769,6 +769,7 @@ public class Gui implements EntryPoint{
 	                quality.setVisible(true);
 					saveConfig();
 					modMap.renderMap(configList);
+					mapButton.setText("View Module Map");
 					
 					pPanel.hide();
 
@@ -992,6 +993,7 @@ public class Gui implements EntryPoint{
       	if(addModuleSucess){
       		sucessCounter++;
       		row++;
+      		saveModules();
     	}
     	else {
     		  int removeTarget = moduleArray.indexOf(Integer.toString(code));
@@ -1034,6 +1036,7 @@ public class Gui implements EntryPoint{
 		if(moduleStore != null) {
 			moduleStore.setItem("configNum", "" + configNum);
 			moduleStore.setItem("config", configList.toJSONString());
+			//moduleStore.setItem("before", beforeList.toJSONString());
 		}
 	}
 	
@@ -1045,6 +1048,7 @@ public class Gui implements EntryPoint{
 		if(moduleStore != null) {
 			String num = moduleStore.getItem("configNum");
 			String configString = moduleStore.getItem("config");
+			//String beforeString = moduleStore.getItem("before");
 			if(configString != null && configString != "[]") {
 				JSONArray jA = (JSONArray) JSONParser.parseLenient(configString);
 				JSONNumber jN;
@@ -1068,6 +1072,32 @@ public class Gui implements EntryPoint{
 					yCoordinate = (int) jN.doubleValue();
 					make.createModule(idNumber, xCoordinate, yCoordinate, turnsToUpright, condition);
 				}
+				/*
+				if(beforeString != null && beforeString != "[]") {
+					JSONArray jA2 = (JSONArray) JSONParser.parseLenient(beforeString);
+					JSONNumber jN2;
+					JSONString jS2;
+					ModuleMaker make2 = new ModuleMaker(beforeList);
+					int xCoordinate2, yCoordinate2, turnsToUpright2;
+					String condition2 = null;
+					for(int i = 0; i < jA2.size(); i++) {
+						final int idNumber2;
+						JSONObject jO2 = (JSONObject) jA2.get(i);
+						jN2 = (JSONNumber) jO2.get("code");
+						idNumber2 = (int) jN2.doubleValue();
+						moduleArray.add(Integer.toString(idNumber2));
+						jS2 = (JSONString) jO2.get("status");
+						condition = jS2.stringValue();
+						jN2 = (JSONNumber) jO2.get("turns");
+						turnsToUpright2 = (int) jN2.doubleValue();
+						jN2 = (JSONNumber) jO2.get("X");
+						xCoordinate2 = (int) jN2.doubleValue();
+						jN2 = (JSONNumber) jO2.get("Y");
+						yCoordinate2 = (int) jN2.doubleValue();
+						make.createModule(idNumber2, xCoordinate2, yCoordinate2, turnsToUpright2, condition2);
+					}
+				}
+				*/
 				ConfigurationBuilder cBuild = new ConfigurationBuilder(configList);
 				MinConfigurationBuilder mcBuild = new MinConfigurationBuilder(configList);
 				if(num == "0"){
@@ -1082,6 +1112,9 @@ public class Gui implements EntryPoint{
 				else if (num == "3"){
 					config = cBuild.buildCrossConfiguration();
 				}
+				//before.setVisible(true);
+				//qualityInt = config.getQuality();
+				//quality.setVisible(true);
 			}
 		}
 	}
