@@ -89,7 +89,7 @@ public class Gui implements EntryPoint{
 	private int counter = 0;
 	private Label configPoss; //this label appears in the top left hand corner of the main page and tells if a minimum configuration is possible
 	private ModuleMap modMap = new ModuleMap();
-	private Button getConfigs, before, after, mapButton;
+	private Button getConfigs, before, after, mapButton, saveConfigButton;
 	//these are the add button listener values (become the value in the add fields) they are set to their inital states. 
 	private String conditionString = "Usable"; 
 	private Integer xNumb = 1;
@@ -173,6 +173,7 @@ public class Gui implements EntryPoint{
 		   loginPage();
 		   
 		   loadModules();
+		   loadConfig();
 		   
 		   final HorizontalPanel southPanel = new HorizontalPanel();
 		   southPanel.setWidth("15cm");

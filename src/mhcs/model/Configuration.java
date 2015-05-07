@@ -75,14 +75,19 @@ public class Configuration {
 		quality = newQuality;
 	}
 	
-	public void moveCenterOfGravity(Integer x, Integer y) {
-		if (x > OFFSET && y > OFFSET) {
+	public boolean moveCenterOfGravity(Integer x, Integer y) {
+		boolean result = false;
+		if (x > OFFSET && x < (100 - OFFSET) && y > OFFSET && y < (100 - OFFSET)) {
 			Integer oldX = averageX();
 			Integer oldY = averageY();
 			
 			absoluteX += x - oldX;
 			absoluteY += y - oldY;
+			
+			result = true;
 		}
+		
+		return result;
 	}
 	
 	private Integer averageX() {
