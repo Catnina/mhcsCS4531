@@ -161,6 +161,7 @@ public class Gui implements EntryPoint{
 		    		}
 		    	}
 		    });
+		    login.center();
 		    login.show();
 	   }
 
@@ -306,6 +307,7 @@ public class Gui implements EntryPoint{
                   changeCenter = new Button ("Center of Gravity", new ClickHandler() {
                 	   public void onClick(ClickEvent event) { 
                 		  final PopupPanel pPanel = new PopupPanel();
+                		  pPanel.center();
                 		  pPanel.show();
                 		  pPanel.setGlassEnabled(true);
                 		  pPanel.setAutoHideEnabled(true);
@@ -784,6 +786,7 @@ public class Gui implements EntryPoint{
 			      	});
 			        vPanelTemp.add(tempButton);
 			        tempPP.add(vPanelTemp);
+			        tempPP.center();
 			      	tempPP.show();	
 			  }
 		  });
@@ -1015,6 +1018,7 @@ public class Gui implements EntryPoint{
     tempSucesses.add(tempButton);
     sucesses.add(tempSucesses);
     checkMinConfig();
+    sucesses.center();
     sucesses.show();
     }
 	
