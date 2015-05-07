@@ -71,6 +71,8 @@ public class Gui implements EntryPoint{
 	private Date endDate, currentDate;
 	private ModuleList moduleList; // this is the module list!! It must be passed whenever we add (or remove) modules or print the map
 	private ModuleList configList; // configurations list
+	private Configuration config;
+
 	
 	private Integer caseNumb; //this integer holds which test case we are running from NASA/ESA feed (for User Story 1) 
 	private SoundController soundController = new SoundController(); // this enables the use of sound output at any place throught the GUI
@@ -221,6 +223,11 @@ public class Gui implements EntryPoint{
           		   }
           	   }
               });
+              
+              //CARLOS'S CODE
+              Label quality = new Label ("Configuration Quality: "+ config.getQuality());
+              southPanel.add(quality);
+              
 //              Button configMapButton = new Button ("View Configuration Map", new ClickHandler() {
 //           	   public void onClick(ClickEvent event) { 
 //           		   modMap.renderMap(configList);
@@ -230,7 +237,7 @@ public class Gui implements EntryPoint{
 //              mapButtons.add(configMapButton);
               southPanel.add(mapButton);
               
-              before.setEnabled(false);
+              /*before.setEnabled(false);
                southPanel.add(before);
               after = new Button ("After", new ClickHandler() {
                 public void onClick(ClickEvent event) {
@@ -238,7 +245,7 @@ public class Gui implements EntryPoint{
                    }
                 });
                after.setEnabled(false);
-                southPanel.add(after);
+                southPanel.add(after);*/
 
            //*******************************************	   
            //NorthPanel
