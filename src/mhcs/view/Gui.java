@@ -100,6 +100,7 @@ public class Gui implements EntryPoint{
 	private Integer configNumb = 0;
 	private FlexTable moduleInfo = new FlexTable(); 
 	private int configNum;
+	private Integer qualityInt = 0;
 
 	
 	/*
@@ -281,6 +282,11 @@ public class Gui implements EntryPoint{
                });
                
                southPanel.add(saveConfigButton);
+               
+               
+               quality = new Label ("Configuration Quality: "+qualityInt);
+               quality.setVisible(false);
+               southPanel.add(quality);
 
            //*******************************************	   
            //NorthPanel
@@ -732,6 +738,9 @@ public class Gui implements EntryPoint{
 						configNum = 3;
 					}
 					
+					qualityInt = config.getQuality();
+	                quality.setText("Configuration Quality: "+qualityInt);
+	                quality.setVisible(true);
 					saveConfig();
 					modMap.renderMap(configList);
 					
