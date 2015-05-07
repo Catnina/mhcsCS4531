@@ -98,7 +98,8 @@ public class Gui implements EntryPoint{
 	private Integer yNumb = 1;
 	private Integer orientNumb = 0;
 	private Integer configNumb = 0;
-	private FlexTable moduleInfo = new FlexTable();   
+	private FlexTable moduleInfo = new FlexTable(); 
+	private int configNum;
 
 	
 	/*
@@ -252,7 +253,7 @@ public class Gui implements EntryPoint{
                 });
                after.setEnabled(false);
                 southPanel.add(after);
-                //TODO
+               
                saveConfigButton = new Button("Save Configuration", new ClickHandler() {
             	   	public void onClick(ClickEvent event) {
             	   		final PopupPanel save = new PopupPanel();
@@ -713,18 +714,22 @@ public class Gui implements EntryPoint{
 					if(choice == 0){
 						config = mcBuild.buildMinConfigOne();
 						configList = config.getConfigModList();
+						configNum = 0;
 					}
 					else if(choice == 1){
 						config = mcBuild.buildMinConfigTwo();
 						configList = config.getConfigModList();
+						configNum = 1;
 					}
 					else if(choice == 2){
 						config = cBuild.buildCupConfiguration();
 						configList = config.getConfigModList();
+						configNum = 2;
 					}
 					else{
 						config = cBuild.buildCrossConfiguration();
 						configList = config.getConfigModList();
+						configNum = 3;
 					}
 					
 					saveConfig();
@@ -984,6 +989,7 @@ public class Gui implements EntryPoint{
 	public void saveConfig() {
 		moduleStore = Storage.getLocalStorageIfSupported();
 		if(moduleStore != null) {
+			moduleStore.setItem("configNum", "" + configNum);
 			moduleStore.setItem("config", configList.toJSONString());
 		}
 	}
@@ -994,9 +1000,10 @@ public class Gui implements EntryPoint{
 	public void loadConfig() {
 		moduleStore = Storage.getLocalStorageIfSupported();
 		if(moduleStore != null) {
-			String config = moduleStore.getItem("config");
-			if(config != null && config != "[]") {
-				JSONArray jA = (JSONArray) JSONParser.parseLenient(config);
+			String num = moduleStore.getItem("configNum");
+			String configString = moduleStore.getItem("config");
+			if(configString != null && configString != "[]") {
+				JSONArray jA = (JSONArray) JSONParser.parseLenient(configString);
 				JSONNumber jN;
 				JSONString jS;
 				ModuleMaker make = new ModuleMaker(configList);
@@ -1017,6 +1024,20 @@ public class Gui implements EntryPoint{
 					jN = (JSONNumber) jO.get("Y");
 					yCoordinate = (int) jN.doubleValue();
 					make.createModule(idNumber, xCoordinate, yCoordinate, turnsToUpright, condition);
+				}
+				ConfigurationBuilder cBuild = new ConfigurationBuilder(configList);
+				MinConfigurationBuilder mcBuild = new MinConfigurationBuilder(configList);
+				if(num == "0"){
+					config = mcBuild.buildMinConfigOne();
+				}
+				else if(num == "1"){
+					config = mcBuild.buildMinConfigTwo();
+				}
+				else if(num == "2"){
+					config = cBuild.buildCupConfiguration();
+				}
+				else if (num == "3"){
+					config = cBuild.buildCrossConfiguration();
 				}
 			}
 		}
