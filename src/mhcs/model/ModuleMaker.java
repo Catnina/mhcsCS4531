@@ -31,7 +31,7 @@ public class ModuleMaker {
 				list.addModule(newModule);
 			} else if( (id >= 61 && id <= 80) || (id >= 91 && id <= 100) || (id >= 111 && id <= 120) || (id >= 131 && id <= 134) || (id >= 141 && id <= 144) || (id >= 151 && id <= 154) || (id >= 161 && id <= 164) || (id >= 171 && id <= 174) || (id >=181 && id <= 184) ) {
 				newModule = new StandardModule(xCoordinate, yCoordinate, idNumber, turnsToUpright, condition);
-				list.addModule(newModule);
+				result = list.addModule(newModule);
 			} else {
 				result = false;
 			}
