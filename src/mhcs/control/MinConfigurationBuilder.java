@@ -87,10 +87,10 @@ public class MinConfigurationBuilder {
 				tempX = tempX-4;
 			}
 			if(tempY > 46){
-				tempX = tempX-4;
+				tempY = tempY-4;
 			}
 			if(tempY < 4){
-				tempX = tempX+4;
+				tempY = tempY+4;
 			}
 			returnConfig = new Configuration(tempX, tempY, key, 66);
 		}
@@ -170,10 +170,10 @@ public class MinConfigurationBuilder {
 				tempX = tempX-4;
 			}
 			if(tempY > 46){
-				tempX = tempX-4;
+				tempY = tempY-4;
 			}
 			if(tempY < 4){
-				tempX = tempX+4;
+				tempY = tempY+4;
 			}
 			returnConfig = new Configuration(tempX, tempY, key, 78);
 		}
