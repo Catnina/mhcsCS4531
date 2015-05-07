@@ -252,6 +252,34 @@ public class Gui implements EntryPoint{
                 });
                after.setEnabled(false);
                 southPanel.add(after);
+                //TODO
+               saveConfigButton = new Button("Save Configuration", new ClickHandler() {
+            	   	public void onClick(ClickEvent event) {
+            	   		final PopupPanel save = new PopupPanel();
+            	   		save.center();
+            	   		VerticalPanel vp = new VerticalPanel();
+            	   		vp.add(new Label("Saving will finalize the position of the configuration!"));
+            	   		FlowPanel flow = new FlowPanel();
+            	   		flow.add(new Label("Are you sure you wish to save?"));
+            	   		flow.add(new Button("Yes", new ClickHandler() {
+            	   			public void onClick(ClickEvent event) {
+            	   				saveConfig();
+            	   				save.hide();
+            	   			}
+            	   		}));
+            	   		flow.add(new Button("No", new ClickHandler() {
+            	   			public void onClick(ClickEvent event) {
+            	   				save.hide();
+            	   			}
+            	   		}));
+            	   		
+            	   		vp.add(flow);
+            	   		save.add(vp);
+            	   		save.show();
+            	   	}
+               });
+               
+               southPanel.add(saveConfigButton);
 
            //*******************************************	   
            //NorthPanel
