@@ -176,6 +176,12 @@ public class Gui implements EntryPoint{
 		   
 		   loginPage();
 		   
+		   moduleInfo.setText(0, 0, "Module Code");
+     	   moduleInfo.setText(0, 1, "X-Coord");
+     	    moduleInfo.setText(0, 2, "Y-Coord");
+     	    moduleInfo.setText(0, 3, "Condition");
+     	    moduleInfo.setText(0, 4, "Rotations");
+     	    moduleInfo.setText(0, 5, "Remove");
 		   loadModules();
 		   loadConfig();
 		   
@@ -213,6 +219,7 @@ public class Gui implements EntryPoint{
 	              	    moduleInfo.setText(0, 3, "Condition");
 	              	    moduleInfo.setText(0, 4, "Rotations");
 	              	    moduleInfo.setText(0, 5, "Remove");
+	              	    checkMinConfig();
 	            	}
 	            }
 	            });
@@ -465,12 +472,7 @@ public class Gui implements EntryPoint{
            //sHolder.setSize("1000px", "700px");
       		middlePanel.setWidth("42cm");      		
       		//creates a flextable for all of the modules to get added to
-      		moduleInfo.setText(0, 0, "Module Code");
-      	    moduleInfo.setText(0, 1, "X-Coord");
-      	    moduleInfo.setText(0, 2, "Y-Coord");
-      	    moduleInfo.setText(0, 3, "Condition");
-      	    moduleInfo.setText(0, 4, "Rotations");
-      	    moduleInfo.setText(0, 5, "Remove");
+      		
       	   
     	    ScrollPanel modInfoScrollPanel = new ScrollPanel();
       	    modInfoScrollPanel.setSize("440px", "650px");
@@ -951,7 +953,7 @@ public class Gui implements EntryPoint{
     moduleInfo.setText(0, 4, "Rotations");
     moduleInfo.setText(0, 5, "Remove");
     Integer sucessCounter = 0;
-    int row = moduleInfo.getRowCount()+1;
+    int row = moduleInfo.getRowCount();
     for (int i = 0; i < jA.size(); i++) {
     	final int code; 
     	JSONObject jO = (JSONObject)jA.get(i);
@@ -1137,7 +1139,7 @@ public class Gui implements EntryPoint{
 				ModuleMaker make = new ModuleMaker(moduleList);
 				int xCoordinate, yCoordinate, turnsToUpright;
 				String condition = null;
-				int row = moduleInfo.getRowCount()+1;
+				int row = moduleInfo.getRowCount();
 				for(int i = 0; i < jA.size(); i++) {
 					final int idNumber;
 					JSONObject jO = (JSONObject) jA.get(i);
@@ -1251,6 +1253,7 @@ public class Gui implements EntryPoint{
 		 modMap.renderMap(moduleList);
 		 modMaker.clear();
 		 configList.clearList();
+		 saveConfig();
 		 saveModules();
 	}
 }
