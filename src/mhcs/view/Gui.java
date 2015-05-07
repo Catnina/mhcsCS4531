@@ -161,7 +161,7 @@ public class Gui implements EntryPoint{
 		    		}
 		    	}
 		    });
-		    login.center();
+		    //login.center();
 		    login.show();
 	   }
 
